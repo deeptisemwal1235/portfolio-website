@@ -105,6 +105,22 @@ export async function getPostBySlug(slug: string): Promise<PostRow | null> {
   return data;
 }
 
+/** Admin-only: fetch a project by slug regardless of published status. */
+export async function getProjectBySlugForAdmin(slug: string): Promise<ProjectRow | null> {
+  const sb = createSupabaseServerClient();
+  const { data, error } = await sb.from("projects").select("*").eq("slug", slug).maybeSingle();
+  if (error) { console.error("[db] getProjectBySlugForAdmin:", error.message); return null; }
+  return data;
+}
+
+/** Admin-only: fetch a post by slug regardless of published status. */
+export async function getPostBySlugForAdmin(slug: string): Promise<PostRow | null> {
+  const sb = createSupabaseServerClient();
+  const { data, error } = await sb.from("posts").select("*").eq("slug", slug).maybeSingle();
+  if (error) { console.error("[db] getPostBySlugForAdmin:", error.message); return null; }
+  return data;
+}
+
 /** Distinct tags used across every row of a table. For editor autocomplete. */
 export async function listAllTags(table: "projects" | "posts"): Promise<string[]> {
   const sb = createSupabaseServerClient();
