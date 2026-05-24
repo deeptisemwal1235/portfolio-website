@@ -592,5 +592,44 @@ Reliability
 - Add a tiny GitHub Actions workflow that runs `npm run build` on every PR — Vercel already does this on its own preview deploys, but a status check on the PR is cleaner.
 
 Content
-- Upload `headshot.png` to Supabase Storage and switch the hero portrait to that URL (currently served from `public/`, fine for now but inconsistent with the rest of the media pipeline).
 - Write the next 1–2 analysis posts directly through `/admin` to validate the end-to-end author workflow.
+
+---
+
+### Session 4 — 2026-05-24 — Polish + CMS expansion
+
+Scope: clear every remaining backlog item from Session 3, then a polish round (404, JSON-LD, footer social).
+
+Headshot + media
+- New portrait `deepti-headshot.jpeg` uploaded to Supabase Storage at `portfolio-media/hero/deepti-headshot.jpeg`. Hero now reads from `NEXT_PUBLIC_HEADSHOT_URL` with the bucket URL as fallback. Old `public/headshot.png` deleted.
+- `scripts/upload-headshot.ts` — one-off uploader using the service role key.
+
+Social + SEO
+- `app/opengraph-image.tsx` — Next ImageResponse renders a 1200x630 brand card (Rose Clay bg, DS mark, "Energy Policy & Regulations Expert" serif headline, capability strip).
+- `app/layout.tsx` got `metadataBase`, full `openGraph` + `twitter` blocks. Twitter inherits the OG image via Next convention.
+- `app/sitemap.ts` + `app/robots.ts` — auto-generated XML sitemap (home + every published project + post with real `updated_at` lastmod), robots blocks `/admin` and `/api`.
+- `lib/jsonLd.tsx` — JSON-LD builders for WebSite, Person, Article (project detail), BlogPosting (analysis detail). Home + both detail templates emit structured data.
+
+Mobile UX
+- Hamburger nav: client `Navbar` with slide-down drawer rendered as a sibling of `<nav>` (the nav's `backdrop-filter` was containing-blocking `position: fixed` descendants — drawer was collapsing to ~76px).
+- Mobile clamps: hero h1 → `clamp(58px, 19vw, 104px)`, gutter min → 32px, sections + detail pages tightened (drop-cap 4.4em → 3em, stat-row collapses to 1-col below 380px, banner 21:9 → 16:10 on phones).
+- Fixed `.nav-inner { padding: 18px 0 }` silently zeroing the container's horizontal padding — split into `padding-top`/`padding-bottom`.
+
+Reliability + analytics
+- Rate-limit on `/api/contact`: in-memory sliding window keyed by `x-forwarded-for`, 3 req / 60s per IP, `429` + `Retry-After` header. Frontend surfaces the server message in the toast.
+- `@vercel/analytics` + `@vercel/speed-insights` mounted in `layout.tsx`.
+- `.github/workflows/build.yml` — `npm ci && npm run build` on every PR + push, against stub Supabase env so secrets aren't required for the check.
+
+CMS
+- View/Preview link per row in the admin dashboard.
+- Tag autocomplete in `ContentEditor` (`<datalist>` + click-to-add chips) backed by `lib/db.listAllTags(table)`.
+- Draft-preview routes `/admin/preview/projects/[slug]` and `/admin/preview/analysis/[slug]` — fetch via `get*BySlugForAdmin` (no `published` filter), render with detail templates plus a coloured banner ("DRAFT PREVIEW" or "Published").
+- Drag-to-reorder for the projects grid: new `display_order` column (migration `0001_project_display_order.sql`), `/admin/projects/order` with native HTML5 drag handles + ↑/↓ buttons, `getPublishedProjects()` now sorts by `display_order` first.
+- `site_settings` (key/value) table for editable site config. Footer renders LinkedIn / X / GitHub icons from this table; admin can edit at `/admin/settings`. Migration `0002_site_settings.sql` seeds with the supplied URLs.
+
+Polish
+- Branded 404 (`app/not-found.tsx`) in the Rose Clay palette with home + contact CTAs.
+
+Verified: live at https://portfolio-website-xi-ivory.vercel.app — home, projects, analysis, admin, and `/sitemap.xml` + `/robots.txt` all return 200. Rate limiter test (5 POSTs from same forwarded IP) returns `200,200,200,429,429` with `Retry-After: 58`.
+
+Apply once in Supabase SQL editor: `supabase/migrations/0001_project_display_order.sql` (done) and `supabase/migrations/0002_site_settings.sql` (pending — enables the footer social icons).
