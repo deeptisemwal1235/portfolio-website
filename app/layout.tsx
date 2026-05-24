@@ -27,11 +27,30 @@ const mono = JetBrains_Mono({
 const faviconSvg =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232a1f17'/%3E%3Ctext x='50' y='66' font-family='Georgia,serif' font-style='italic' font-size='54' text-anchor='middle' fill='%23f4ebe0'%3EDS%3C/text%3E%3C/svg%3E";
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://portfolio-website-xi-ivory.vercel.app";
+const TITLE = "Deepti Semwal — Energy Policy & Regulations Expert";
+const DESCRIPTION =
+  "Deepti Semwal — Energy Policy & Regulations Expert. Post-graduate M.Tech, Energy Policy & Regulations, IIT Gandhinagar. Consultation, market analysis, and strategy for the energy transition.";
+
 export const metadata: Metadata = {
-  title: "Deepti Semwal — Energy Policy & Regulations Expert",
-  description:
-    "Deepti Semwal — Energy Policy & Regulations Expert. Post-graduate M.Tech, Energy Policy & Regulations, IIT Gandhinagar. Consultation, market analysis, and strategy for the energy transition.",
+  metadataBase: new URL(SITE_URL),
+  title: TITLE,
+  description: DESCRIPTION,
   icons: { icon: faviconSvg },
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: "Deepti Semwal",
+    title: TITLE,
+    description: DESCRIPTION,
+    locale: "en_IN",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
