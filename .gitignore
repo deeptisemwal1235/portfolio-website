@@ -1,0 +1,15 @@
+node_modules/
+.next/
+out/
+build/
+.env*
+.DS_Store
+*.log
+.vercel
+next-env.d.ts
+
+# Local design reference bundle — not part of the shipped repo
+energy-policy-expert-portfolio-website/
+
+# Claude Code local settings
+.claude/
