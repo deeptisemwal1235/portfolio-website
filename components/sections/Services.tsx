@@ -1,3 +1,5 @@
+import { getSettings } from "@/lib/settings";
+
 const SERVICES = [
   {
     num: "/01",
@@ -21,18 +23,17 @@ const SERVICES = [
   },
 ];
 
-export default function Services() {
+export default async function Services() {
+  const s = await getSettings();
   return (
     <section className="s" id="services">
       <div className="container">
         <div className="section-head">
           <div>
-            <span className="section-num">§ 02 — Engagement</span>
-            <h2>How I <em>help.</em></h2>
+            <span className="section-num">{s.section_services_eyebrow}</span>
+            <h2 dangerouslySetInnerHTML={{ __html: s.section_services_title_html }} />
           </div>
-          <p className="lede">
-            Four service tracks I run for clients — from one-off regulatory reads to month-long strategy retainers. Each engagement is scoped against your decision deadline, not the other way around.
-          </p>
+          <p className="lede">{s.section_services_lede}</p>
         </div>
         <div className="services-list">
           {SERVICES.map((s) => (

@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { getPublishedPosts, formatPostDate } from "@/lib/db";
+import { getSettings } from "@/lib/settings";
 
 export default async function Analysis() {
-  const all = await getPublishedPosts();
+  const [all, s] = await Promise.all([getPublishedPosts(), getSettings()]);
   const posts = all.slice(0, 6);
   const hasMore = all.length > 6;
 
@@ -11,12 +12,10 @@ export default async function Analysis() {
       <div className="container">
         <div className="section-head">
           <div>
-            <span className="section-num">§ 04 — Writing</span>
-            <h2>My <em>analysis.</em></h2>
+            <span className="section-num">{s.section_analysis_eyebrow}</span>
+            <h2 dangerouslySetInnerHTML={{ __html: s.section_analysis_title_html }} />
           </div>
-          <p className="lede">
-            Short reads on India&apos;s energy sector — tariff moves, market design, and what new policy notifications mean for the people actually building things.
-          </p>
+          <p className="lede">{s.section_analysis_lede}</p>
         </div>
 
         {posts.length === 0 ? (

@@ -1,3 +1,5 @@
+import { getSettings } from "@/lib/settings";
+
 const SKILLS = [
   {
     num: "01",
@@ -52,18 +54,17 @@ const SKILLS = [
   },
 ];
 
-export default function Skills() {
+export default async function Skills() {
+  const s = await getSettings();
   return (
     <section className="s skills" id="skills">
       <div className="container">
         <div className="section-head">
           <div>
-            <span className="section-num">§ 01 — Capabilities</span>
-            <h2>Areas of <em>expertise.</em></h2>
+            <span className="section-num">{s.section_skills_eyebrow}</span>
+            <h2 dangerouslySetInnerHTML={{ __html: s.section_skills_title_html }} />
           </div>
-          <p className="lede">
-            Six core domains where I work — drawn from coursework at IIT Gandhinagar and applied across consultations for startups, policy think-tanks and energy developers.
-          </p>
+          <p className="lede">{s.section_skills_lede}</p>
         </div>
 
         <div className="skills-grid">

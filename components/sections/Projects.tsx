@@ -1,11 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getPublishedProjects } from "@/lib/db";
+import { getSettings } from "@/lib/settings";
 import { PROJECT_THUMB_SVG, thumbClassFor } from "@/lib/svgMap";
 
 export default async function Projects() {
-  const all = await getPublishedProjects();
-  // Home shows up to 3; the rest are accessible via /projects.
+  const [all, s] = await Promise.all([getPublishedProjects(), getSettings()]);
   const projects = all.slice(0, 3);
   const hasMore = all.length > 3;
 
@@ -14,12 +14,10 @@ export default async function Projects() {
       <div className="container">
         <div className="section-head">
           <div>
-            <span className="section-num">§ 03 — Selected Work</span>
-            <h2>Projects <em>&</em> research.</h2>
+            <span className="section-num">{s.section_projects_eyebrow}</span>
+            <h2 dangerouslySetInnerHTML={{ __html: s.section_projects_title_html }} />
           </div>
-          <p className="lede">
-            Selected academic and consulting projects — from microgrid economics to MPPT control. Click any card for the full write-up.
-          </p>
+          <p className="lede">{s.section_projects_lede}</p>
         </div>
 
         <div className="project-grid">

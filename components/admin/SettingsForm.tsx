@@ -22,11 +22,12 @@ type Tab = { id: string; label: string; fields: Field[] };
 
 const TABS: Tab[] = [
   {
-    id: "site",
-    label: "Site",
+    id: "hero",
+    label: "Hero",
     fields: [
-      { key: "hero_eyebrow", label: "Hero eyebrow", type: "text", placeholder: "Deepti Semwal · est. portfolio 2025" },
-      { key: "hero_bio", label: "Hero bio paragraph", type: "textarea", placeholder: "I help startups..." },
+      { key: "hero_eyebrow", label: "Hero eyebrow", type: "text" },
+      { key: "hero_headline_html", label: "Hero headline (HTML)", help: "Use <em>…</em> for italic accent and <br> for line breaks.", type: "textarea" },
+      { key: "hero_bio", label: "Hero bio paragraph", type: "textarea" },
       { key: "hero_pill_1", label: "Hero pill 1", help: "Lead with ● for the green dot.", type: "text" },
       { key: "hero_pill_2", label: "Hero pill 2", type: "text" },
       { key: "hero_pill_3", label: "Hero pill 3", type: "text" },
@@ -34,6 +35,28 @@ const TABS: Tab[] = [
       { key: "hero_cta_primary_href", label: "Primary CTA link", type: "text", placeholder: "#projects or /path" },
       { key: "hero_cta_secondary_label", label: "Secondary CTA label", type: "text" },
       { key: "hero_cta_secondary_href", label: "Secondary CTA link", type: "text" },
+      { key: "ticker_words", label: "Ticker words", help: "Separated by ' · ' or ','", type: "textarea" },
+    ],
+  },
+  {
+    id: "sections",
+    label: "Section heads",
+    fields: [
+      { key: "section_skills_eyebrow", label: "Skills eyebrow", type: "text" },
+      { key: "section_skills_title_html", label: "Skills title (HTML)", type: "text" },
+      { key: "section_skills_lede", label: "Skills lede", type: "textarea" },
+      { key: "section_services_eyebrow", label: "Services eyebrow", type: "text" },
+      { key: "section_services_title_html", label: "Services title (HTML)", type: "text" },
+      { key: "section_services_lede", label: "Services lede", type: "textarea" },
+      { key: "section_projects_eyebrow", label: "Projects eyebrow", type: "text" },
+      { key: "section_projects_title_html", label: "Projects title (HTML)", type: "text" },
+      { key: "section_projects_lede", label: "Projects lede", type: "textarea" },
+      { key: "section_analysis_eyebrow", label: "Analysis eyebrow", type: "text" },
+      { key: "section_analysis_title_html", label: "Analysis title (HTML)", type: "text" },
+      { key: "section_analysis_lede", label: "Analysis lede", type: "textarea" },
+      { key: "section_contact_eyebrow", label: "Contact eyebrow", type: "text" },
+      { key: "section_contact_title_html", label: "Contact title (HTML)", type: "text" },
+      { key: "section_contact_lede", label: "Contact lede", type: "textarea" },
     ],
   },
   {

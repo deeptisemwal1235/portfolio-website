@@ -10,12 +10,11 @@ export default async function Hero() {
         <div className="hero-grid">
           <div>
             <span className="eyebrow reveal">{s.hero_eyebrow}</span>
-            <h1 className="reveal" style={{ marginTop: 22 }}>
-              Energy<br />
-              Policy <em>&</em><br />
-              Regulations<br />
-              <em>Expert.</em>
-            </h1>
+            <h1
+              className="reveal"
+              style={{ marginTop: 22 }}
+              dangerouslySetInnerHTML={{ __html: s.hero_headline_html }}
+            />
             <div className="hero-meta reveal">
               {s.hero_pill_1 && <PillFromString text={s.hero_pill_1} />}
               {s.hero_pill_2 && <PillFromString text={s.hero_pill_2} />}
@@ -49,12 +48,7 @@ export default async function Hero() {
         </div>
       </div>
 
-      <div className="ticker" aria-hidden="true">
-        <div className="ticker-track">
-          <span>Tariff Orders <span className="sep"></span> ARR <span className="sep"></span> Power Markets <span className="sep"></span> Carbon Credits <span className="sep"></span> Green Hydrogen <span className="sep"></span> CBG <span className="sep"></span> Regulations <span className="sep"></span></span>
-          <span>Tariff Orders <span className="sep"></span> ARR <span className="sep"></span> Power Markets <span className="sep"></span> Carbon Credits <span className="sep"></span> Green Hydrogen <span className="sep"></span> CBG <span className="sep"></span> Regulations <span className="sep"></span></span>
-        </div>
-      </div>
+      <Ticker words={s.ticker_words} />
     </header>
   );
 }
@@ -74,4 +68,26 @@ function PillFromString({ text }: { text: string }) {
     );
   }
   return <span className="pill">{text}</span>;
+}
+
+function Ticker({ words }: { words: string }) {
+  // Accept either " · " or "," as separators.
+  const items = words.split(/\s*·\s*|\s*,\s*/).map((w) => w.trim()).filter(Boolean);
+  const line = (
+    <span>
+      {items.map((w, i) => (
+        <span key={i}>
+          {w} <span className="sep" />{" "}
+        </span>
+      ))}
+    </span>
+  );
+  return (
+    <div className="ticker" aria-hidden="true">
+      <div className="ticker-track">
+        {line}
+        {line}
+      </div>
+    </div>
+  );
 }

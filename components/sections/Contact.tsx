@@ -8,12 +8,10 @@ export default async function Contact() {
       <div className="container">
         <div className="section-head">
           <div>
-            <span className="section-num">§ 05 — Get in touch</span>
-            <h2>Let&apos;s<br /><em>collaborate.</em></h2>
+            <span className="section-num">{s.section_contact_eyebrow}</span>
+            <h2 dangerouslySetInnerHTML={{ __html: s.section_contact_title_html }} />
           </div>
-          <p className="lede">
-            Working on a regulatory filing, a market-entry brief, or just want a sanity-check on a tariff strategy? Send a note — I read every message.
-          </p>
+          <p className="lede">{s.section_contact_lede}</p>
         </div>
 
         <div className="contact-grid">
