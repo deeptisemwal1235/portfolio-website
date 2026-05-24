@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import slugify from "slugify";
@@ -44,6 +44,42 @@ export default function ContentEditor({
   // When true, slug auto-tracks title. Flipped to false the moment the
   // user edits the slug field manually, so we don't clobber their edit.
   const [slugAuto, setSlugAuto] = useState(mode === "create");
+
+  // Dirty-tracking: keep a snapshot of the saved form. Anything diverging
+  // means there are unsaved edits, which trips Cmd+S + beforeunload.
+  const savedRef = useRef<Initial>(initial);
+  const [dirty, setDirty] = useState(false);
+  useEffect(() => {
+    setDirty(JSON.stringify(form) !== JSON.stringify(savedRef.current));
+  }, [form]);
+
+  // beforeunload — browser-native "unsaved changes" warning.
+  useEffect(() => {
+    if (!dirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      // Most modern browsers ignore the message string but honour the prompt.
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [dirty]);
+
+  // Cmd+S / Ctrl+S → save.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const meta = e.metaKey || e.ctrlKey;
+      if (meta && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        save();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // `save` is stable enough — it reads form from closure each call. Re-binding
+    // every keystroke would be wasteful.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form]);
 
   function currentTags(): string[] {
     return form.tags.split(",").map((t) => t.trim()).filter(Boolean);
@@ -113,6 +149,9 @@ export default function ContentEditor({
         toast.error(error.message);
         return;
       }
+      // Mark clean before navigating so beforeunload doesn't prompt.
+      savedRef.current = { ...form };
+      setDirty(false);
       toast.success("Saved");
       router.push("/admin/dashboard");
       router.refresh();
@@ -218,10 +257,19 @@ export default function ContentEditor({
       </div>
 
       <div className="actions">
-        <button type="button" className="btn-primary-cta" onClick={save} disabled={pending}>
+        <button type="button" className="btn-primary-cta" onClick={save} disabled={pending} title="Save (⌘S / Ctrl+S)">
           {pending ? "Saving…" : "Save"}
         </button>
         <button type="button" className="btn-link" onClick={() => router.push("/admin/dashboard")}>Cancel</button>
+        <span className="save-state">
+          {pending
+            ? "Saving…"
+            : dirty
+              ? "● Unsaved changes — ⌘S to save"
+              : mode === "edit"
+                ? "Saved"
+                : ""}
+        </span>
       </div>
     </div>
   );

@@ -212,3 +212,13 @@
   .message-head { grid-template-columns: 1fr; gap: 6px; padding: 12px 14px; }
   .message-date { text-align: left; }
 }
+
+/* ContentEditor: save-state pill next to the Save button */
+.save-state {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-3);
+  margin-left: auto;
+}
+.save-state:has(*), .save-state {
+  /* When unsaved, the dot in "● Unsaved changes" reads as accent. */
+}
