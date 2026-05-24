@@ -1,7 +1,10 @@
 import Link from "next/link";
-import { PROJECTS } from "@/lib/content/projects";
+import { getPublishedProjects } from "@/lib/db";
+import { PROJECT_THUMB_SVG, thumbClassFor } from "@/lib/svgMap";
 
-export default function Projects() {
+export default async function Projects() {
+  const projects = await getPublishedProjects();
+
   return (
     <section className="s projects" id="projects">
       <div className="container">
@@ -16,23 +19,38 @@ export default function Projects() {
         </div>
 
         <div className="project-grid">
-          {PROJECTS.map((p) => (
-            <Link className="project reveal" href={`/projects/${p.slug}`} key={p.slug}>
-              <div className="project-thumb">
-                <div className={`scene ${p.thumb}`}>{p.svg}</div>
-                <span className="year">{p.year}</span>
-                <span className="scene-label">{p.sceneLabel}</span>
-              </div>
-              <div className="project-meta">
-                <h3 className="project-title">{p.title}</h3>
-                <div className="project-tags">
-                  {p.tags.map((t) => (
-                    <span key={t}>{t}</span>
-                  ))}
+          {projects.map((p, i) => {
+            const thumbClass = thumbClassFor(p.slug, i);
+            const svg = PROJECT_THUMB_SVG[p.slug];
+            return (
+              <Link className="project reveal" href={`/projects/${p.slug}`} key={p.slug}>
+                <div className="project-thumb">
+                  {p.cover_image_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={p.cover_image_url}
+                      alt={p.title}
+                      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+                    />
+                  ) : (
+                    <div className={`scene ${thumbClass}`}>{svg}</div>
+                  )}
+                  {p.year !== null && <span className="year">{p.year}</span>}
+                  {!p.cover_image_url && (
+                    <span className="scene-label">[ project cover ]</span>
+                  )}
                 </div>
-              </div>
-            </Link>
-          ))}
+                <div className="project-meta">
+                  <h3 className="project-title">{p.title}</h3>
+                  {p.tags && p.tags.length > 0 && (
+                    <div className="project-tags">
+                      {p.tags.map((t) => <span key={t}>{t}</span>)}
+                    </div>
+                  )}
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>

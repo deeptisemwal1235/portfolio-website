@@ -2,21 +2,28 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
-import { POSTS } from "@/lib/content/posts";
+import { getPostBySlug, listPublishedPostSlugs, formatPostDate } from "@/lib/db";
+import { thumbClassFor } from "@/lib/svgMap";
 
-export function generateStaticParams() {
-  return POSTS.map((p) => ({ slug: p.slug }));
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const slugs = await listPublishedPostSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const p = POSTS.find((x) => x.slug === params.slug);
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const p = await getPostBySlug(params.slug);
   if (!p) return {};
-  return { title: `${p.title} · Deepti Semwal`, description: p.excerpt };
+  return { title: `${p.title} · Deepti Semwal`, description: p.excerpt ?? undefined };
 }
 
-export default function AnalysisDetailPage({ params }: { params: { slug: string } }) {
-  const p = POSTS.find((x) => x.slug === params.slug);
+export default async function AnalysisDetailPage({ params }: { params: { slug: string } }) {
+  const p = await getPostBySlug(params.slug);
   if (!p) notFound();
+
+  const date = formatPostDate(p.published_at);
+  const thumb = thumbClassFor(p.slug);
 
   return (
     <>
@@ -25,27 +32,36 @@ export default function AnalysisDetailPage({ params }: { params: { slug: string 
         <div className="container">
           <a className="back-link" href="/#analysis">← Back to analysis</a>
           <div className="detail-meta">
-            <span className="cat">{p.category}</span>
-            <span>{p.date}</span>
-            <span>{p.readTime} read</span>
+            {p.category && <span className="cat">{p.category}</span>}
+            {date && <span>{date}</span>}
+            {p.read_time && <span>{p.read_time}</span>}
             <span>by Deepti Semwal</span>
           </div>
           <h1>{p.title}.</h1>
-          <p className="standfirst">{p.standfirst}</p>
+          {p.excerpt && <p className="standfirst">{p.excerpt}</p>}
         </div>
       </header>
 
       <div className="container">
-        <div className={`detail-banner ${p.thumb}`}>
-          <span className="scene-label">{p.bannerScene}</span>
+        <div className={`detail-banner ${p.cover_image_url ? "" : thumb}`}>
+          {p.cover_image_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={p.cover_image_url}
+              alt={p.title}
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            <span className="scene-label">[ article cover · 21:9 ]</span>
+          )}
         </div>
       </div>
 
       <main className="detail-body">
-        <article className="container" dangerouslySetInnerHTML={{ __html: p.contentHtml }} />
+        <article className="container" dangerouslySetInnerHTML={{ __html: p.content ?? "" }} />
         <div className="container">
           <div className="detail-footer">
-            <div>Published {p.date} · {p.category}</div>
+            <div>{[date && `Published ${date}`, p.category].filter(Boolean).join(" · ")}</div>
             <a href="/#analysis">← All analysis</a>
           </div>
         </div>

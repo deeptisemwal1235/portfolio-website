@@ -523,3 +523,30 @@ Verified: `npm run build` succeeds, 14 routes prerendered (1 home, 6 analysis, 3
 Out of scope (Session 2+): Supabase client + schema + RLS, `/admin` login & dashboard, Tiptap editor, image upload to Storage, Resend email, Vercel deploy. The contact API will be swapped to persist + email at that point.
 
 Git: repo initialised at the workspace root, author `Deepti <deeptisemwal1235@gmail.com>` (repo-local config), single commit pushed to `main` on `https://github.com/deeptisemwal1235/portfolio-website.git`. The prototype bundle under `energy-policy-expert-portfolio-website/` is gitignored — it stays locally as visual reference but doesn't ship.
+
+### Session 2 — 2026-05-24 — Supabase CMS + admin + Resend + deploy guide
+
+Scope: everything deferred from Session 1 — Supabase persistence, admin CMS, Tiptap editor, Resend wiring, and a step-by-step deploy guide. The public site now reads from Supabase instead of the static seed.
+
+Added:
+- `supabase/schema.sql` — projects, posts, contacts tables + `updated_at` trigger + RLS policies + Storage `portfolio-media` bucket policies. Run once via Supabase SQL editor.
+- `lib/supabase/{client,server,middleware}.ts` — `@supabase/ssr` clients (browser, RSC, edge middleware)
+- `lib/db.ts` — server-side fetchers (`getPublishedProjects`, `getProjectBySlug`, `getPublishedPosts`, `getPostBySlug`, `formatPostDate`) and cookie-free `listPublished*Slugs` helpers for `generateStaticParams` at build time
+- `lib/svgMap.ts` — slug → SVG / thumb-class map so the three prototype projects keep their hand-drawn schematics; new admin-created projects fall back to a rotating gradient placeholder
+- `lib/types.ts` — `ProjectRow`, `PostRow`
+- `middleware.ts` + `lib/supabase/middleware.ts` — protects `/admin/*` (redirects unauthenticated → `/admin`, and already-signed-in → `/admin/dashboard`)
+- Refactored `components/sections/Projects.tsx`, `components/sections/Analysis.tsx`, `app/projects/[slug]/page.tsx`, `app/analysis/[slug]/page.tsx` to fetch from Supabase. Pages use `revalidate = 60` for ISR.
+- `app/admin/layout.tsx` + `app/admin/admin.css` — admin chrome (rose-clay palette, utilitarian tables / forms / Tiptap styles)
+- `app/admin/page.tsx` — login form (`components/admin/LoginForm.tsx`, email/password via Supabase Auth)
+- `app/admin/dashboard/page.tsx` — projects + posts tables with status pills + edit/delete (`components/admin/{AdminNav,DeleteRowButton}.tsx`)
+- `app/admin/{projects,analysis}/new/page.tsx` and `[id]/page.tsx` — create/edit shared component `components/admin/ContentEditor.tsx` (title/slug auto, excerpt, category, tags, year or publish-date, read time, cover upload, published toggle)
+- `components/admin/RichTextEditor.tsx` — Tiptap (StarterKit + Link + Image + Placeholder) with toolbar (H2/H3, bold/italic, lists, blockquote, HR, link, image upload)
+- `components/admin/ImageUpload.tsx` + `lib/storage.ts` — uploads to Supabase Storage `portfolio-media` bucket, returns public URL
+- Updated `app/api/contact/route.ts` — persists to `contacts` via service-role client, fires Resend email if `RESEND_API_KEY` + `CONTACT_TO_EMAIL` are set (failure to send email does not fail the save)
+- `scripts/seed.ts` — one-shot idempotent seeder that upserts the prototype 3 projects + 6 posts; run `npx tsx scripts/seed.ts`
+- `.env.example` — documents the five (or six) required env vars
+- `SETUP.md` — end-to-end first-time setup: Supabase project / schema / storage / admin user / API keys / Resend / local dev / seed / Vercel deploy via GitHub
+
+Out of scope (Session 3+): live deploy verification (waiting on user to create Supabase + Resend accounts and paste keys), favicon iteration, draft preview routes, project/post drag-to-reorder.
+
+Verified: `npm run build` succeeds with placeholder env vars; 11 routes generated (4 admin, 2 dynamic detail, public home, login, not-found, api). Middleware compiled to 82.4 kB.
