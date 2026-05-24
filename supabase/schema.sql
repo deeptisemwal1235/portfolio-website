@@ -46,6 +46,7 @@ create table if not exists contacts (
   email text not null,
   subject text,
   message text not null,
+  read boolean default false,
   created_at timestamptz default now()
 );
 
@@ -117,6 +118,14 @@ create policy "contacts public insert" on contacts
 drop policy if exists "contacts auth read" on contacts;
 create policy "contacts auth read" on contacts
   for select to authenticated using (true);
+
+drop policy if exists "contacts auth update" on contacts;
+create policy "contacts auth update" on contacts
+  for update to authenticated using (true) with check (true);
+
+drop policy if exists "contacts auth delete" on contacts;
+create policy "contacts auth delete" on contacts
+  for delete to authenticated using (true);
 
 -- Storage bucket ------------------------------------------------------
 -- Run this AFTER creating the bucket via Dashboard → Storage → New bucket

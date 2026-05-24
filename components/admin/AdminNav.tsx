@@ -21,6 +21,7 @@ export default function AdminNav() {
       </div>
       <div className="links">
         <Link href="/admin/dashboard">Dashboard</Link>
+        <Link href="/admin/messages">Messages</Link>
         <Link href="/admin/settings">Settings</Link>
         <Link href="/" target="_blank">View site ↗</Link>
         <button className="signout" onClick={signOut}>Sign out</button>

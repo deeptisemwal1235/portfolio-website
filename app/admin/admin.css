@@ -166,3 +166,49 @@
   font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em;
   color: var(--ink-3);
 }
+
+/* /admin/messages list */
+.messages-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.message-row {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  overflow: hidden;
+  transition: border-color .15s ease;
+}
+.message-row.unread { border-color: var(--rule-2); }
+.message-row.open { border-color: var(--accent); }
+.message-row:hover { border-color: var(--rule-2); }
+.message-head {
+  width: 100%;
+  background: transparent; border: none; cursor: pointer; text-align: left;
+  display: grid; grid-template-columns: 1.4fr 2fr 160px; gap: 18px; align-items: center;
+  padding: 14px 18px;
+  font-size: 14px; color: var(--ink-2);
+}
+.message-row.unread .message-head { background: rgba(196,106,90,0.04); }
+.message-from { display: inline-flex; align-items: center; gap: 8px; }
+.message-from strong { color: var(--ink); font-weight: 500; }
+.message-email { color: var(--ink-3); font-size: 12px; }
+.message-subject { color: var(--ink-2); font-family: var(--serif); font-size: 16px; }
+.message-date {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+  color: var(--ink-3); text-align: right;
+}
+.unread-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); display: inline-block; }
+.message-body {
+  border-top: 1px solid var(--rule);
+  padding: 18px 22px;
+  background: var(--bg-2);
+}
+.message-body pre {
+  white-space: pre-wrap; word-break: break-word;
+  font-family: var(--sans); font-size: 15px; line-height: 1.6;
+  color: var(--ink); margin: 0 0 16px;
+}
+.message-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.message-actions .danger { color: var(--accent-deep); }
+@media (max-width: 760px) {
+  .message-head { grid-template-columns: 1fr; gap: 6px; padding: 12px 14px; }
+  .message-date { text-align: left; }
+}
