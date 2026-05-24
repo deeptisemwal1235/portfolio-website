@@ -72,7 +72,7 @@ a { color: inherit; text-decoration: none; }
   transition: border-color .3s ease, background .3s ease;
 }
 .nav.scrolled { border-bottom-color: var(--rule); }
-.nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
+.nav-inner { display: flex; align-items: center; justify-content: space-between; padding-top: 18px; padding-bottom: 18px; }
 .logo { display: inline-flex; align-items: center; gap: 12px; font-family: var(--serif); font-size: 28px; line-height: 1; letter-spacing: -0.02em; }
 .logo-mark { width: 38px; height: 38px; border-radius: 50%; background: var(--ink); color: var(--paper); display: grid; place-items: center; font-family: var(--serif); font-size: 18px; font-style: italic; letter-spacing: -0.04em; }
 .logo-name { font-size: 18px; font-family: var(--sans); font-weight: 500; letter-spacing: -0.005em; }
