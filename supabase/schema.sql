@@ -49,6 +49,12 @@ create table if not exists contacts (
   created_at timestamptz default now()
 );
 
+create table if not exists site_settings (
+  key text primary key,
+  value text,
+  updated_at timestamptz default now()
+);
+
 -- updated_at trigger ----------------------------------------------------
 
 create or replace function set_updated_at()
@@ -67,11 +73,24 @@ drop trigger if exists trg_posts_updated on posts;
 create trigger trg_posts_updated before update on posts
   for each row execute function set_updated_at();
 
+drop trigger if exists trg_site_settings_updated on site_settings;
+create trigger trg_site_settings_updated before update on site_settings
+  for each row execute function set_updated_at();
+
 -- RLS ---------------------------------------------------------
 
-alter table projects enable row level security;
-alter table posts    enable row level security;
-alter table contacts enable row level security;
+alter table projects      enable row level security;
+alter table posts         enable row level security;
+alter table contacts      enable row level security;
+alter table site_settings enable row level security;
+
+drop policy if exists "site_settings public read" on site_settings;
+create policy "site_settings public read" on site_settings
+  for select using (true);
+
+drop policy if exists "site_settings auth all" on site_settings;
+create policy "site_settings auth all" on site_settings
+  for all to authenticated using (true) with check (true);
 
 -- Public read of published rows; authenticated full access.
 drop policy if exists "projects public read" on projects;
