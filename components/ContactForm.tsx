@@ -67,6 +67,14 @@ export default function ContactForm() {
           required
         />
       </div>
+
+      {/* Honeypot — invisible to humans, irresistible to spam bots.
+          Real visitors leave this blank; the server rejects any submit
+          where `website` is set. */}
+      <div aria-hidden="true" style={{ position: "absolute", left: "-10000px", width: 1, height: 1, overflow: "hidden" }}>
+        <label htmlFor="f-website">Website (leave blank)</label>
+        <input id="f-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+      </div>
       <div className="form-actions">
         <span className={`form-status${status?.ok ? " ok" : ""}`} role="status" aria-live="polite">
           {status?.text ?? ""}

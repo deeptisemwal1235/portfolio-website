@@ -5,7 +5,7 @@ import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import { getProjectBySlug, listPublishedProjectSlugs } from "@/lib/db";
 import { thumbClassFor } from "@/lib/svgMap";
-import { JsonLd, articleJsonLd, SITE_URL } from "@/lib/jsonLd";
+import { JsonLd, articleJsonLd, breadcrumbJsonLd, SITE_URL } from "@/lib/jsonLd";
 import { getSettings } from "@/lib/settings";
 
 export const revalidate = 60;
@@ -58,9 +58,16 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
     settings,
   });
 
+  const crumbs = breadcrumbJsonLd([
+    { name: "Home", url: SITE_URL },
+    { name: "Projects", url: `${SITE_URL}/projects` },
+    { name: p.title, url: `${SITE_URL}/projects/${p.slug}` },
+  ]);
+
   return (
     <>
       <JsonLd data={ld} />
+      <JsonLd data={crumbs} />
       <Navbar home={false} />
       <header className="detail-hero">
         <div className="container">

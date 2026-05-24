@@ -56,6 +56,15 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json().catch(() => null);
+
+  // Honeypot: humans never fill this hidden input. Bots usually do.
+  // Return 200 so the bot thinks it worked (don't tip them off that we
+  // discarded it). Skip Supabase + Resend entirely.
+  if (body && typeof body.website === "string" && body.website.trim().length > 0) {
+    console.warn(`[contact] honeypot tripped ip=${ip} website=${body.website.slice(0, 80)}`);
+    return NextResponse.json({ ok: true });
+  }
+
   if (!body?.name || !body?.email || !body?.message) {
     return NextResponse.json({ ok: false, error: "Missing required fields" }, { status: 400 });
   }
