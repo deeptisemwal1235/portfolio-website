@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import slugify from "slugify";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { calcReadTime } from "@/lib/utils";
 import RichTextEditor from "./RichTextEditor";
 import ImageUpload from "./ImageUpload";
 
@@ -67,6 +68,8 @@ export default function ContentEditor({
     }
     start(async () => {
       const sb = createSupabaseBrowserClient();
+      // Auto-fill read_time when the editor left it blank.
+      const readTime = form.read_time.trim() || calcReadTime(form.content) || null;
       const row: Record<string, unknown> = {
         title: form.title.trim(),
         slug: form.slug.trim(),
@@ -77,7 +80,7 @@ export default function ContentEditor({
         tags: form.tags
           ? form.tags.split(",").map((t) => t.trim()).filter(Boolean)
           : null,
-        read_time: form.read_time.trim() || null,
+        read_time: readTime,
         published: form.published,
       };
       if (kind === "projects") row.year = form.year ?? null;
@@ -166,7 +169,17 @@ export default function ContentEditor({
         )}
         <div>
           <label>Read time</label>
-          <input type="text" value={form.read_time} onChange={(e) => update("read_time", e.target.value)} placeholder="6 min read" />
+          <div style={{ display: "flex", gap: 8 }}>
+            <input type="text" value={form.read_time} onChange={(e) => update("read_time", e.target.value)} placeholder="Auto-calc on save" />
+            <button
+              type="button"
+              className="btn-link"
+              onClick={() => update("read_time", calcReadTime(form.content) ?? "")}
+              title="Compute from current content"
+            >
+              Auto
+            </button>
+          </div>
         </div>
       </div>
 
