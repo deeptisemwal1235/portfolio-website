@@ -570,29 +570,108 @@ Done:
 
 ## Backlog (deferred — pick up in future sessions)
 
-Operational
-- Add the production Vercel URL to **Supabase → Authentication → URL Configuration** (`Site URL` + `Redirect URLs` `https://portfolio-website-xi-ivory.vercel.app/**`) so `/admin` login works reliably on the production domain across all browsers.
-- Verify a custom Resend sending domain (currently emails go from the sandbox `onboarding@resend.dev`, which is rate-limited and may land in spam). Once verified, set `RESEND_FROM_EMAIL=Portfolio <contact@yourdomain.com>` in Vercel env.
-- Point a real custom domain at the Vercel project (e.g. `deeptisemwal.com`) and update the Supabase Site URL accordingly.
+Legend: **🔥** high-impact / do-soon · **📦** quality-of-life · **🌱** nice-to-have
 
-Product polish
-- Replace the gradient/SVG placeholder thumbs on admin-created projects with real cover images (upload via the admin editor — the path is already wired through Supabase Storage).
-- Author the OG image / Twitter card for social sharing (currently the inline-SVG DS favicon is the only visual metadata).
-- Add a sitemap.xml + robots.txt route.
+### Operational
+- 📦 Verify a custom Resend sending domain (currently emails go from the sandbox `onboarding@resend.dev`, which is rate-limited and may land in spam). Once verified, set `RESEND_FROM_EMAIL=Portfolio <contact@yourdomain.com>` in Vercel env.
+- 🌱 Point a real custom domain at the Vercel project (e.g. `deeptisemwal.com`) and update the Supabase Site URL accordingly.
 
-CMS UX
-- Draft-preview route for unpublished projects/posts so they can be reviewed before flipping `published: true`.
-- Drag-to-reorder for the project grid (the asymmetric layout currently relies on `created_at` ordering).
-- Tag autocomplete in the editor instead of free-text comma-separated input.
-- Per-row "view live" link from the admin dashboard.
+### UI / UX
+- 🔥 Hero headline ("Energy Policy & Regulations Expert.") is hardcoded — make it editable from `/admin/settings`.
+- 🔥 Hero ticker words ("Tariff Orders · ARR · …") hardcoded — pull from settings or tags.
+- 🔥 Skills (6 cards), Services (4 rows), and section titles ("How I help.", "Areas of expertise.", etc.) all hardcoded. Add a `home_sections` table or settings keys so they're editable.
+- 📦 Admin-created projects with no cover image always get `thumb-a` gradient — rotate a/b/c by index instead.
+- 📦 Footer is three-up center alignment — could tighten: name + tagline left, social right.
+- 📦 No favicon variations (apple-touch-icon, maskable). Single SVG works but install on mobile looks generic.
+- 📦 Footer mentions "Designed with care · Noida → World" — replace with a real tagline or remove.
+- 🌱 Pause ticker on hover; respect `prefers-reduced-motion`.
 
-Reliability
-- Add a `/api/contact` rate-limit (one submission per IP per minute) to keep the free-tier Supabase + Resend quotas safe.
-- Wire up Vercel Analytics (free hobby tier) for basic page-view + Core Web Vitals data.
-- Add a tiny GitHub Actions workflow that runs `npm run build` on every PR — Vercel already does this on its own preview deploys, but a status check on the PR is cleaner.
+### Features missing
+- 🔥 **`/admin/messages`** — read the `contacts` table from inside admin. Filter unread, mark read, delete. Right now contact-form submissions are only visible via the Supabase dashboard.
+- 🔥 **Index pages**: `/projects` and `/analysis` listing every published item. Home only shows the top 3/6 — older content has no browse URL beyond the direct slug.
+- 🔥 **Reading-time auto-calc** — `lib/utils.calcReadTime(html)` plus prefill on save. Editor currently asks for manual entry.
+- 📦 **Category filter** on analysis once post count > ~8.
+- 📦 **Related-posts** widget on each article (by shared category/tags).
+- 📦 **Share buttons** on articles (X, LinkedIn, copy-link).
+- 📦 **"Last updated"** indicator on articles when `updated_at` > `published_at + N days`.
+- 📦 **Newsletter signup** even if it's just a Supabase email-capture row.
+- 📦 **Drag-reorder for posts** (currently only projects have it).
+- 📦 **Image library / reuse** in admin — every upload creates a new file; can't pick a previously-uploaded image.
+- 🌱 Site-wide search (FlexSearch in browser is enough for this content size).
+- 🌱 Auto-save / draft in Tiptap editor — long writes risk loss on tab close.
+- 🌱 Post revision history.
+- 🌱 Bulk publish/delete in admin.
+- 🌱 Soft-delete / trash with 30-day restore.
 
-Content
-- Write the next 1–2 analysis posts directly through `/admin` to validate the end-to-end author workflow.
+### SEO
+- 🔥 **Person JSON-LD missing `sameAs`** — add LinkedIn + X URLs from `site_settings`. Single biggest entity-linking miss for Google's Knowledge Graph.
+- 🔥 **Per-article OG images** — generate at `app/analysis/[slug]/opengraph-image.tsx` using `ImageResponse` with title + category. Doubles social-share CTR in practice.
+- 🔥 **`<meta name="author">`** and OG `article:author` / `article:published_time` / `article:tag` tags missing on article pages.
+- 📦 **Person JSON-LD `knowsAbout`** — array of the 6 expertise areas. Strengthens entity association.
+- 📦 **Breadcrumb JSON-LD** on detail pages (`Home > Analysis > {title}`).
+- 📦 **Canonical URLs** explicit on every page (Next does it implicitly; explicit is safer for syndication).
+- 📦 Project pages use `Article` — `TechArticle` or `ScholarlyArticle` would be more precise.
+- 📦 Add `lang="en-IN"` to `<html>` and declare `<link rel="alternate" hreflang>` even at single-locale.
+- 🌱 Add `/feed.xml` (RSS/Atom) — energy analysts use feed readers.
+- 🌱 Verify ownership in Google Search Console + Bing Webmaster + submit sitemap.
+
+### AI / LLM optimization
+- 🔥 **`/llms.txt`** — emerging standard at https://llmstxt.org. Tells ChatGPT/Claude/Perplexity what your site is about. Trivial to write.
+- 📦 **Structured Service schema** for the 4 services — appears in AI assistant "what does she offer" answers.
+- 📦 **FAQ block on `/about`** ("What does Deepti consult on?", "Where is she based?") with FAQPage JSON-LD. AI loves Q&A.
+- 🌱 **Author bio block** on every article with structured Person data — helps AI cite you, not just the article.
+- 🌱 Wrap dates in `<time datetime="...">` for richer parsing.
+
+### Performance
+- 📦 Pre-generate OG image at build instead of edge runtime.
+- 📦 Add `@next/bundle-analyzer` so future bloat is visible.
+- 🌱 PWA manifest + service worker for installable / offline-first.
+- 🌱 Lazy-load `sonner` toaster import (saves ~10KB on first paint).
+- 🌱 Preload the hero image with `<link rel="preload" as="image">` for absolute fastest LCP.
+
+### Accessibility
+- 🔥 **Skip-to-content link** at the top of `<body>` — important for keyboard / screen-reader users.
+- 📦 **Focus trap** inside open mobile drawer — tab currently leaks to elements behind the drawer.
+- 📦 Respect `prefers-reduced-motion` — disable ticker, reveal transitions, hover translates.
+- 📦 Color contrast: `--ink-3` (#806258) on `--bg-2` (#f0d2c0) is ~3.4:1 — below WCAG AA 4.5:1 for body. Bump `--ink-3` to ~#6a4f44.
+- 📦 Add `aria-modal="true"` to mobile drawer when open.
+- 🌱 Audit heading hierarchy (h1 → h2 → h3 with no skips).
+- 🌱 Add `aria-describedby` from form fields to help/error text.
+
+### Security
+- 🔥 **Content Security Policy** headers via `next.config.js`. Without one, an XSS in any vendor script can exfiltrate data.
+- 📦 **Origin check on `/api/contact`** — drop requests not from your own domain or empty Origin (kills most bots).
+- 📦 Sanitize Tiptap HTML server-side (DOMPurify) — belt-and-suspenders against admin-side mistakes.
+- 📦 Add a honeypot field to the contact form — kills 90% of bot submissions instantly.
+- 🌱 2FA on Supabase admin login.
+
+### Reliability / observability
+- 📦 **Global `error.tsx`** error boundary so a render failure in one section doesn't blow up the page.
+- 📦 **Supabase nightly backups** — set up via Supabase dashboard → Database → Backups (free tier has 7-day point-in-time).
+- 📦 **Sentry (or similar)** for runtime error tracking — free tier covers personal sites.
+- 🌱 UptimeRobot or BetterStack ping every 5 min.
+
+### Admin UX
+- 🔥 **Loading state on every admin click** — currently clicking a row, a tab, "Save", "Delete", or any nav link gives zero feedback until the new state renders. Add a global top-of-page progress bar (e.g. `nextjs-toploader`) plus per-button spinner/disabled state so the user never wonders if their click registered.
+- 🔥 **Auto-slug update only if user hasn't touched the slug field** — currently you click "From title" manually. Should auto-update while title is being typed AND slug field is empty/derived.
+- 📦 **`Cmd+S` shortcut** in editor to save.
+- 📦 **Unsaved-changes warning** when navigating away from the editor.
+- 📦 **Visible link** to draft preview directly from the editor (currently have to go back to dashboard).
+- 📦 **Saving spinner** in the editor toolbar.
+- 🌱 Mobile-friendly admin (currently desktop-only assumption).
+- 🌱 "Duplicate post" button to clone a post as starter.
+
+### Content
+- 🔥 **Real About page content** — replace the four placeholder Tiptap sections at `/admin/settings → About`.
+- 🔥 **At least one project cover image** uploaded — proves the upload flow works and looks great on social.
+- 📦 **Testimonials section** with 2-3 quotes from clients/professors. Trust signal.
+- 📦 Write the next 1–2 analysis posts through admin to validate the end-to-end author flow.
+
+### Dev experience
+- 📦 `@next/bundle-analyzer` (mentioned above).
+- 🌱 Vitest + Playwright for at least one smoke test per public route.
+- 🌱 Storybook for the section components.
+- 🌱 Expand README with full "fork this and use it" walkthrough.
 
 ---
 
