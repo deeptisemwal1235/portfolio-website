@@ -6,6 +6,7 @@ import Footer from "@/components/ui/Footer";
 import { getProjectBySlug, listPublishedProjectSlugs } from "@/lib/db";
 import { thumbClassFor } from "@/lib/svgMap";
 import { JsonLd, articleJsonLd, SITE_URL } from "@/lib/jsonLd";
+import { getSettings } from "@/lib/settings";
 
 export const revalidate = 60;
 
@@ -17,11 +18,29 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const p = await getProjectBySlug(params.slug);
   if (!p) return {};
-  return { title: `${p.title} · Deepti Semwal`, description: p.excerpt ?? undefined };
+  const url = `${SITE_URL}/projects/${p.slug}`;
+  return {
+    title: `${p.title} · Deepti Semwal`,
+    description: p.excerpt ?? undefined,
+    authors: [{ name: "Deepti Semwal", url: SITE_URL }],
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      url,
+      title: p.title,
+      description: p.excerpt ?? undefined,
+      publishedTime: p.created_at,
+      modifiedTime: p.updated_at,
+      authors: ["Deepti Semwal"],
+      section: p.category ?? undefined,
+      tags: p.tags ?? undefined,
+    },
+    twitter: { card: "summary_large_image", title: p.title, description: p.excerpt ?? undefined },
+  };
 }
 
 export default async function ProjectDetailPage({ params }: { params: { slug: string } }) {
-  const p = await getProjectBySlug(params.slug);
+  const [p, settings] = await Promise.all([getProjectBySlug(params.slug), getSettings()]);
   if (!p) notFound();
 
   const thumb = thumbClassFor(p.slug);
@@ -36,6 +55,7 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
     dateModified: p.updated_at,
     category: p.category,
     tags: p.tags,
+    settings,
   });
 
   return (

@@ -7,19 +7,23 @@ import Analysis from "@/components/sections/Analysis";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/ui/Footer";
 import { JsonLd, websiteJsonLd, personJsonLd } from "@/lib/jsonLd";
+import { getSettings } from "@/lib/settings";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const settings = await getSettings();
   return (
     <>
       <JsonLd data={websiteJsonLd()} />
-      <JsonLd data={personJsonLd()} />
+      <JsonLd data={personJsonLd(settings)} />
       <Navbar />
+      <main id="main">
       <Hero />
       <Skills />
       <Services />
       <Projects />
       <Analysis />
       <Contact />
+      </main>
       <Footer />
     </>
   );

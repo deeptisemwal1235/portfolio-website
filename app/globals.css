@@ -500,3 +500,17 @@ section.s { padding: clamp(80px, 11vw, 140px) 0; position: relative; }
   .about-hero-grid { grid-template-columns: 1fr; }
   .about-hero-portrait { max-width: 360px; margin: 0 auto; aspect-ratio: 1 / 1.15; }
 }
+
+/* Skip-to-content link — hidden until focused via keyboard */
+.skip-link {
+  position: absolute;
+  left: 8px; top: -200px;
+  z-index: 100;
+  background: var(--ink); color: var(--paper);
+  padding: 10px 16px; border-radius: 6px;
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: top .2s ease;
+}
+.skip-link:focus { top: 8px; outline: 2px solid var(--accent); outline-offset: 2px; }

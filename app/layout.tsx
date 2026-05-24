@@ -64,13 +64,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${serif.variable} ${sans.variable} ${mono.variable}`}>
+    <html lang="en-IN" className={`${serif.variable} ${sans.variable} ${mono.variable}`}>
       <head>
         {SUPABASE_ORIGIN && (
           <link rel="preconnect" href={SUPABASE_ORIGIN} crossOrigin="anonymous" />
         )}
       </head>
       <body>
+        <a href="#main" className="skip-link">Skip to content</a>
         <NavScroll />
         {children}
         <Toaster position="bottom-right" />
