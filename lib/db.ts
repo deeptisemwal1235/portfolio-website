@@ -26,6 +26,25 @@ export async function listPublishedPostSlugs(): Promise<string[]> {
   return (data ?? []).map((r) => r.slug);
 }
 
+/** For sitemap. Anon client + RLS so it works at build time without cookies. */
+export async function listPublishedProjectsForSitemap(): Promise<{ slug: string; updated_at: string | null }[]> {
+  const { data, error } = await anonClient()
+    .from("projects")
+    .select("slug, updated_at")
+    .eq("published", true);
+  if (error) { console.error("[db] listPublishedProjectsForSitemap:", error.message); return []; }
+  return data ?? [];
+}
+
+export async function listPublishedPostsForSitemap(): Promise<{ slug: string; updated_at: string | null }[]> {
+  const { data, error } = await anonClient()
+    .from("posts")
+    .select("slug, updated_at")
+    .eq("published", true);
+  if (error) { console.error("[db] listPublishedPostsForSitemap:", error.message); return []; }
+  return data ?? [];
+}
+
 export async function getPublishedProjects(): Promise<ProjectRow[]> {
   const sb = createSupabaseServerClient();
   const { data, error } = await sb
