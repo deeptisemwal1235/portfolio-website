@@ -1,0 +1,28 @@
+name: Build
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: Next.js build
+        # Stub Supabase/Resend env so the build succeeds without secrets.
+        # The actual deploy build runs in Vercel with real env vars.
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+          SUPABASE_SERVICE_ROLE_KEY: placeholder
+          NEXT_PUBLIC_SITE_URL: https://example.com
+        run: npm run build

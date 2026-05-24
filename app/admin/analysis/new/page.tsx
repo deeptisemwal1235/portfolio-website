@@ -1,7 +1,11 @@
 import AdminNav from "@/components/admin/AdminNav";
 import ContentEditor from "@/components/admin/ContentEditor";
+import { listAllTags } from "@/lib/db";
 
-export default function NewArticlePage() {
+export const dynamic = "force-dynamic";
+
+export default async function NewArticlePage() {
+  const knownTags = await listAllTags("posts");
   return (
     <>
       <AdminNav />
@@ -11,6 +15,7 @@ export default function NewArticlePage() {
         <ContentEditor
           mode="create"
           kind="posts"
+          knownTags={knownTags}
           initial={{
             title: "", slug: "", excerpt: "", content: "", cover_image_url: null,
             category: "", tags: "", read_time: "", published_at: null, published: false,

@@ -2,12 +2,16 @@ import { notFound } from "next/navigation";
 import AdminNav from "@/components/admin/AdminNav";
 import ContentEditor from "@/components/admin/ContentEditor";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { listAllTags } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 export default async function EditProjectPage({ params }: { params: { id: string } }) {
   const sb = createSupabaseServerClient();
-  const { data } = await sb.from("projects").select("*").eq("id", params.id).maybeSingle();
+  const [{ data }, knownTags] = await Promise.all([
+    sb.from("projects").select("*").eq("id", params.id).maybeSingle(),
+    listAllTags("projects"),
+  ]);
   if (!data) notFound();
 
   return (
@@ -19,6 +23,7 @@ export default async function EditProjectPage({ params }: { params: { id: string
         <ContentEditor
           mode="edit"
           kind="projects"
+          knownTags={knownTags}
           initial={{
             id: data.id,
             title: data.title ?? "",

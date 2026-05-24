@@ -37,6 +37,14 @@ export default async function DashboardPage() {
                     <td>{p.year ?? "—"}</td>
                     <td><span className={`status-pill ${p.published ? "published" : "draft"}`}>{p.published ? "Published" : "Draft"}</span></td>
                     <td style={{ textAlign: "right" }}>
+                      <a
+                        className="btn-link"
+                        href={p.published ? `/projects/${p.slug}` : `/admin/preview/projects/${p.slug}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {p.published ? "View" : "Preview"} ↗
+                      </a>
                       <Link className="btn-link" href={`/admin/projects/${p.id}`}>Edit</Link>
                       <DeleteRowButton table="projects" id={p.id} label={p.title} />
                     </td>
@@ -67,6 +75,14 @@ export default async function DashboardPage() {
                     <td>{p.published_at ? new Date(p.published_at).toLocaleDateString("en-US", { month: "short", year: "numeric" }) : "—"}</td>
                     <td><span className={`status-pill ${p.published ? "published" : "draft"}`}>{p.published ? "Published" : "Draft"}</span></td>
                     <td style={{ textAlign: "right" }}>
+                      <a
+                        className="btn-link"
+                        href={p.published ? `/analysis/${p.slug}` : `/admin/preview/analysis/${p.slug}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {p.published ? "View" : "Preview"} ↗
+                      </a>
                       <Link className="btn-link" href={`/admin/analysis/${p.id}`}>Edit</Link>
                       <DeleteRowButton table="posts" id={p.id} label={p.title} />
                     </td>

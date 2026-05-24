@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Instrument_Serif, DM_Sans, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import NavScroll from "@/components/ui/NavScroll";
 import "./globals.css";
 
@@ -60,6 +62,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <NavScroll />
         {children}
         <Toaster position="bottom-right" />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

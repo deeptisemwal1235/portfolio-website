@@ -105,6 +105,22 @@ export async function getPostBySlug(slug: string): Promise<PostRow | null> {
   return data;
 }
 
+/** Distinct tags used across every row of a table. For editor autocomplete. */
+export async function listAllTags(table: "projects" | "posts"): Promise<string[]> {
+  const sb = createSupabaseServerClient();
+  const { data, error } = await sb.from(table).select("tags");
+  if (error) {
+    console.error("[db] listAllTags:", error.message);
+    return [];
+  }
+  const set = new Set<string>();
+  (data ?? []).forEach((r) => {
+    const tags = (r as { tags: string[] | null }).tags;
+    if (Array.isArray(tags)) tags.forEach((t) => t && set.add(t));
+  });
+  return Array.from(set).sort((a, b) => a.localeCompare(b));
+}
+
 export function formatPostDate(iso: string | null): string {
   if (!iso) return "";
   const d = new Date(iso);

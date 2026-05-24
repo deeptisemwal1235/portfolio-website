@@ -26,10 +26,30 @@ type Initial = {
   published: boolean;
 };
 
-export default function ContentEditor({ mode, kind, initial }: { mode: Mode; kind: Kind; initial: Initial }) {
+export default function ContentEditor({
+  mode,
+  kind,
+  initial,
+  knownTags = [],
+}: {
+  mode: Mode;
+  kind: Kind;
+  initial: Initial;
+  knownTags?: string[];
+}) {
   const router = useRouter();
   const [pending, start] = useTransition();
   const [form, setForm] = useState<Initial>(initial);
+
+  function currentTags(): string[] {
+    return form.tags.split(",").map((t) => t.trim()).filter(Boolean);
+  }
+  function addTag(tag: string) {
+    const existing = currentTags();
+    if (existing.includes(tag)) return;
+    const next = [...existing, tag].join(", ");
+    update("tags", next);
+  }
 
   function update<K extends keyof Initial>(key: K, value: Initial[K]) {
     setForm((s) => ({ ...s, [key]: value }));
@@ -105,7 +125,26 @@ export default function ContentEditor({ mode, kind, initial }: { mode: Mode; kin
         </div>
         <div>
           <label>Tags (comma-separated)</label>
-          <input type="text" value={form.tags} onChange={(e) => update("tags", e.target.value)} placeholder="Wind, Techno-econ" />
+          <input
+            type="text"
+            value={form.tags}
+            onChange={(e) => update("tags", e.target.value)}
+            placeholder="Wind, Techno-econ"
+            list="known-tags"
+          />
+          <datalist id="known-tags">
+            {knownTags.map((t) => <option key={t} value={t} />)}
+          </datalist>
+          {knownTags.length > 0 && (
+            <div className="tag-suggest">
+              <span className="tag-suggest-label">Used before:</span>
+              {knownTags.filter((t) => !currentTags().includes(t)).slice(0, 16).map((t) => (
+                <button key={t} type="button" className="tag-chip" onClick={() => addTag(t)}>
+                  {t}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

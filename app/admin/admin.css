@@ -95,3 +95,17 @@
 .editor-content img { max-width: 100%; border-radius: 4px; margin: 12px 0; }
 .editor-content a { color: var(--accent-deep); border-bottom: 1px solid var(--accent-soft); }
 .editor-content p.is-editor-empty:first-child::before { content: attr(data-placeholder); color: var(--ink-3); float: left; pointer-events: none; height: 0; }
+
+/* Tag autocomplete chips (under the tags input in ContentEditor) */
+.tag-suggest { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; align-items: center; }
+.tag-suggest-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-3); margin-right: 4px;
+}
+.tag-chip {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+  background: var(--bg-2); border: 1px solid var(--rule); color: var(--ink-2);
+  padding: 4px 10px; border-radius: 999px; cursor: pointer;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.tag-chip:hover { background: var(--paper); border-color: var(--rule-2); color: var(--ink); }
