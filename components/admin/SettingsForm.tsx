@@ -39,6 +39,22 @@ const TABS: Tab[] = [
     ],
   },
   {
+    id: "skills",
+    label: "Skills (6)",
+    fields: [1, 2, 3, 4, 5, 6].flatMap((n) => [
+      { key: `skill_${n}_title` as SettingKey, label: `Skill ${n} — title`, type: "text" as const },
+      { key: `skill_${n}_desc` as SettingKey, label: `Skill ${n} — description`, type: "textarea" as const },
+    ]),
+  },
+  {
+    id: "services",
+    label: "Services (4)",
+    fields: [1, 2, 3, 4].flatMap((n) => [
+      { key: `service_${n}_title` as SettingKey, label: `Service ${n} — title`, type: "text" as const },
+      { key: `service_${n}_desc` as SettingKey, label: `Service ${n} — description`, type: "textarea" as const },
+    ]),
+  },
+  {
     id: "sections",
     label: "Section heads",
     fields: [
