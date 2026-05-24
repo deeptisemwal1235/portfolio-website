@@ -1,6 +1,8 @@
 import ContactForm from "@/components/ContactForm";
+import { getSettings } from "@/lib/settings";
 
-export default function Contact() {
+export default async function Contact() {
+  const s = await getSettings();
   return (
     <section className="s contact" id="contact">
       <div className="container">
@@ -16,22 +18,30 @@ export default function Contact() {
 
         <div className="contact-grid">
           <aside className="contact-info">
-            <div className="info-row">
-              <span className="label">Email</span>
-              <span className="value"><a href="mailto:deeptisemwal1235@gmail.com">deeptisemwal1235@gmail.com</a></span>
-            </div>
-            <div className="info-row">
-              <span className="label">Based in</span>
-              <span className="value">Noida, India · IST</span>
-            </div>
-            <div className="info-row">
-              <span className="label">Availability</span>
-              <span className="value">Open to consultations &amp; advisory roles</span>
-            </div>
-            <div className="info-row">
-              <span className="label">Response time</span>
-              <span className="value">Within 48 hours</span>
-            </div>
+            {s.contact_email && (
+              <div className="info-row">
+                <span className="label">Email</span>
+                <span className="value"><a href={`mailto:${s.contact_email}`}>{s.contact_email}</a></span>
+              </div>
+            )}
+            {s.contact_location && (
+              <div className="info-row">
+                <span className="label">Based in</span>
+                <span className="value">{s.contact_location}</span>
+              </div>
+            )}
+            {s.contact_availability && (
+              <div className="info-row">
+                <span className="label">Availability</span>
+                <span className="value">{s.contact_availability}</span>
+              </div>
+            )}
+            {s.contact_response_time && (
+              <div className="info-row">
+                <span className="label">Response time</span>
+                <span className="value">{s.contact_response_time}</span>
+              </div>
+            )}
           </aside>
           <ContactForm />
         </div>

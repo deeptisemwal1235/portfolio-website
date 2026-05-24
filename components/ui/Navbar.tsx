@@ -8,6 +8,8 @@ const LINKS = [
   { href: "#services", label: "Services" },
   { href: "#projects", label: "Projects" },
   { href: "#analysis", label: "Analysis" },
+  // /about is an absolute route — keep it separate from the anchor links
+  { href: "/about", label: "About", absolute: true },
   { href: "#contact", label: "Contact" },
 ];
 
@@ -45,7 +47,9 @@ export default function Navbar({ home = true }: { home?: boolean }) {
           </Link>
           <ul className="nav-links">
             {LINKS.map((l) => (
-              <li key={l.href}><a href={`${prefix}${l.href}`}>{l.label}</a></li>
+              <li key={l.href}>
+                <a href={l.absolute ? l.href : `${prefix}${l.href}`}>{l.label}</a>
+              </li>
             ))}
           </ul>
           <a className="nav-cta" href={`${prefix}#contact`}>Let&apos;s Talk →</a>
@@ -74,7 +78,9 @@ export default function Navbar({ home = true }: { home?: boolean }) {
         <ul className="nav-drawer-links">
           {LINKS.map((l) => (
             <li key={l.href}>
-              <a href={`${prefix}${l.href}`} onClick={() => setOpen(false)}>{l.label}</a>
+              <a href={l.absolute ? l.href : `${prefix}${l.href}`} onClick={() => setOpen(false)}>
+                {l.label}
+              </a>
             </li>
           ))}
         </ul>

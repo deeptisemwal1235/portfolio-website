@@ -143,3 +143,26 @@
 }
 .order-arrows button:hover:not(:disabled) { background: var(--bg-2); }
 .order-arrows button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* Tabbed settings editor */
+.settings-tabs {
+  display: flex; flex-wrap: wrap; gap: 4px;
+  border-bottom: 1px solid var(--rule);
+  margin: 12px 0 4px;
+}
+.settings-tab {
+  background: transparent; border: none; cursor: pointer;
+  padding: 10px 16px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-3);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color .15s ease, border-color .15s ease;
+}
+.settings-tab:hover { color: var(--ink-2); }
+.settings-tab.active { color: var(--ink); border-bottom-color: var(--accent); }
+.field-help {
+  margin-top: -4px; margin-bottom: 8px;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em;
+  color: var(--ink-3);
+}
