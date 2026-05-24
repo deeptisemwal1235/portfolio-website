@@ -785,3 +785,23 @@ Migrations applied in production:
 - `0006_settings_skills_services.sql` ✅
 
 `/admin/settings` now has 7 tabs covering ~50 editable keys. Every visible word on the home page (except brand iconography) can be edited without touching code.
+
+### Session 7 — 2026-05-25 — Top-5 📦 polish
+
+Scope: knock out the highest-value items remaining in the 📦 tier. Three commits, no migrations.
+
+Reliability + a11y (J)
+- `app/error.tsx` — Next renders this when any uncaught error fires below the root layout. Branded Rose Clay page with "Try again" (`reset()`) + Home CTAs and an `error.digest` reference for log correlation.
+- `--ink-3` colour token: `#806258` → `#6a4f44`. The old value was ~3.4:1 contrast against `--bg-2`, below WCAG AA's 4.5:1 floor for body text. The new value clears AA on all three light backgrounds. Eyebrows, meta labels, pills, and section nums all read noticeably darker.
+
+Security + SEO (K)
+- Honeypot on the contact form. Off-screen "Website (leave blank)" input (`aria-hidden`, `tabIndex={-1}`, autoComplete off). Real visitors never fill it; spam bots fill every field they see. `/api/contact` returns `{ok:true}` when `website` is non-empty — doesn't tell the bot we caught them, doesn't hit Supabase or Resend. Logs the IP + truncated value for monitoring.
+- `lib/jsonLd.breadcrumbJsonLd()` builder. Both detail pages now emit a second `<script type="application/ld+json">` with `BreadcrumbList` (`Home > {Projects|Analysis} > {title}`). Google rich-results can render the trail under each search snippet instead of the raw URL.
+
+Editor UX (L)
+- ContentEditor tracks dirty state by diffing `form` against a `savedRef` snapshot. Three behaviours hang off that:
+  - `Cmd+S` / `Ctrl+S` triggers `save()` from anywhere on the page (window listener, preventDefault swallows the browser's "save page" dialog). Works even while Tiptap has focus.
+  - `beforeunload` fires the browser's native "leave with unsaved changes?" prompt when navigating away.
+  - Mono pill next to Save reads `● Unsaved changes — ⌘S to save` while dirty, `Saved` after success (edit mode only), `Saving…` during the transition.
+
+Backlog now at 53 items: 0 🔥 engineering items left, 2 🔥 content tasks (real About copy + a project cover image — both need the user, not code). The remaining 51 items are 📦 polish / hardening + 🌱 nice-to-haves.
