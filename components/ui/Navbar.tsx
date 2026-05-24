@@ -31,37 +31,46 @@ export default function Navbar({ home = true }: { home?: boolean }) {
   }, [open]);
 
   return (
-    <nav className={`nav${open ? " open" : ""}`}>
-      <div className="container nav-inner">
-        <Link className="logo" href={home ? "#top" : "/"} aria-label="Deepti Semwal — Home" onClick={() => setOpen(false)}>
-          <span className="logo-mark">
-            <em>DS</em>
-          </span>
-          <span>
-            <span className="logo-name">Deepti Semwal</span>
-            <span className="logo-sub">Energy Policy · Regulations</span>
-          </span>
-        </Link>
-        <ul className="nav-links">
-          {LINKS.map((l) => (
-            <li key={l.href}><a href={`${prefix}${l.href}`}>{l.label}</a></li>
-          ))}
-        </ul>
-        <a className="nav-cta" href={`${prefix}#contact`}>Let&apos;s Talk →</a>
+    <>
+      <nav className={`nav${open ? " open" : ""}`}>
+        <div className="container nav-inner">
+          <Link className="logo" href={home ? "#top" : "/"} aria-label="Deepti Semwal — Home" onClick={() => setOpen(false)}>
+            <span className="logo-mark">
+              <em>DS</em>
+            </span>
+            <span>
+              <span className="logo-name">Deepti Semwal</span>
+              <span className="logo-sub">Energy Policy · Regulations</span>
+            </span>
+          </Link>
+          <ul className="nav-links">
+            {LINKS.map((l) => (
+              <li key={l.href}><a href={`${prefix}${l.href}`}>{l.label}</a></li>
+            ))}
+          </ul>
+          <a className="nav-cta" href={`${prefix}#contact`}>Let&apos;s Talk →</a>
 
-        <button
-          className={`nav-burger${open ? " open" : ""}`}
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
-          aria-controls="mobile-drawer"
-          onClick={() => setOpen((v) => !v)}
-          type="button"
-        >
-          <span /><span /><span />
-        </button>
-      </div>
+          <button
+            className={`nav-burger${open ? " open" : ""}`}
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            aria-controls="mobile-drawer"
+            onClick={() => setOpen((v) => !v)}
+            type="button"
+          >
+            <span /><span /><span />
+          </button>
+        </div>
+      </nav>
 
-      <div id="mobile-drawer" className="nav-drawer" aria-hidden={!open} role="dialog">
+      {/* Rendered as a sibling of <nav> (NOT a child) so position:fixed escapes
+          the nav's backdrop-filter containing block. */}
+      <div
+        id="mobile-drawer"
+        className={`nav-drawer${open ? " open" : ""}`}
+        aria-hidden={!open}
+        role="dialog"
+      >
         <ul className="nav-drawer-links">
           {LINKS.map((l) => (
             <li key={l.href}>
@@ -73,6 +82,6 @@ export default function Navbar({ home = true }: { home?: boolean }) {
           Let&apos;s Talk →
         </a>
       </div>
-    </nav>
+    </>
   );
 }
