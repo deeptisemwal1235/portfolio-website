@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const HEADSHOT_URL =
   process.env.NEXT_PUBLIC_HEADSHOT_URL ||
   "https://brtymmjustqesyworyav.supabase.co/storage/v1/object/public/portfolio-media/hero/deepti-headshot.jpeg";
@@ -23,8 +25,13 @@ export default function Hero() {
           </div>
           <aside className="hero-aside reveal">
             <div className="hero-portrait" aria-label="Portrait of Deepti Semwal">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={HEADSHOT_URL} alt="Deepti Semwal" />
+              <Image
+                src={HEADSHOT_URL}
+                alt="Deepti Semwal"
+                fill
+                priority
+                sizes="(max-width: 640px) 320px, (max-width: 820px) 60vw, 420px"
+              />
             </div>
             <p style={{ marginTop: 28 }}>
               I help startups, regulators, and developers navigate India&apos;s energy transition — turning tariff orders, carbon markets, and power-sector rules into clear, executable strategy.

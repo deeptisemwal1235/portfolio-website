@@ -31,6 +31,13 @@ const faviconSvg =
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://portfolio-website-xi-ivory.vercel.app";
+
+// Pull the host out of the Supabase URL so we only preconnect to the actual
+// storage origin in use (and not, say, a wildcard placeholder during PR builds).
+const SUPABASE_ORIGIN = (() => {
+  try { return new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!).origin; }
+  catch { return null; }
+})();
 const TITLE = "Deepti Semwal — Energy Policy & Regulations Expert";
 const DESCRIPTION =
   "Deepti Semwal — Energy Policy & Regulations Expert. Post-graduate M.Tech, Energy Policy & Regulations, IIT Gandhinagar. Consultation, market analysis, and strategy for the energy transition.";
@@ -58,6 +65,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${serif.variable} ${sans.variable} ${mono.variable}`}>
+      <head>
+        {SUPABASE_ORIGIN && (
+          <link rel="preconnect" href={SUPABASE_ORIGIN} crossOrigin="anonymous" />
+        )}
+      </head>
       <body>
         <NavScroll />
         {children}

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import { getProjectBySlug, listPublishedProjectSlugs } from "@/lib/db";
@@ -58,11 +59,13 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
       <div className="container">
         <div className={`detail-banner ${p.cover_image_url ? "" : thumb}`}>
           {p.cover_image_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={p.cover_image_url}
               alt={p.title}
-              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+              fill
+              priority
+              sizes="(max-width: 1240px) 100vw, 1240px"
+              style={{ objectFit: "cover" }}
             />
           ) : (
             <span className="scene-label">[ banner image · 21:9 ]</span>
