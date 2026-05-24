@@ -1,3 +1,7 @@
+const HEADSHOT_URL =
+  process.env.NEXT_PUBLIC_HEADSHOT_URL ||
+  "https://brtymmjustqesyworyav.supabase.co/storage/v1/object/public/portfolio-media/hero/deepti-headshot.jpeg";
+
 export default function Hero() {
   return (
     <header className="hero" id="top">
@@ -20,7 +24,7 @@ export default function Hero() {
           <aside className="hero-aside reveal">
             <div className="hero-portrait" aria-label="Portrait of Deepti Semwal">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/headshot.png" alt="Deepti Semwal" />
+              <img src={HEADSHOT_URL} alt="Deepti Semwal" />
             </div>
             <p style={{ marginTop: 28 }}>
               I help startups, regulators, and developers navigate India&apos;s energy transition — turning tariff orders, carbon markets, and power-sector rules into clear, executable strategy.
