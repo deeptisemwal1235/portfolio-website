@@ -15,7 +15,7 @@
   --paper: #fcefe4;
   --ink: #2f1d1a;
   --ink-2: #503530;
-  --ink-3: #806258;
+  --ink-3: #6a4f44; /* bumped from #806258 to clear WCAG AA on --bg-2 */
   --rule: #e0b8a4;
   --rule-2: #d09f88;
   --accent: #c46a5a;
