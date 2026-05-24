@@ -25,7 +25,7 @@
   --leaf: #5e6b48;
 
   --maxw: 1240px;
-  --gutter: clamp(24px, 5vw, 56px);
+  --gutter: clamp(32px, 5vw, 56px);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -212,10 +212,11 @@ section.s { padding: clamp(80px, 11vw, 140px) 0; position: relative; }
 @media (max-width: 640px) {
   .hero { padding: 48px 0 64px; }
   .hero h1 {
-    font-size: clamp(60px, 17vw, 96px);
-    line-height: 0.94;
-    letter-spacing: -0.025em;
-    overflow-wrap: break-word;
+    font-size: clamp(58px, 19vw, 104px);
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    overflow-wrap: anywhere;
+    hyphens: manual;
   }
   .hero-aside { max-width: none; }
   .hero-portrait { max-width: 320px; margin: 0 auto; aspect-ratio: 1 / 1.15; }
