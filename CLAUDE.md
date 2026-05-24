@@ -632,4 +632,36 @@ Polish
 
 Verified: live at https://portfolio-website-xi-ivory.vercel.app — home, projects, analysis, admin, and `/sitemap.xml` + `/robots.txt` all return 200. Rate limiter test (5 POSTs from same forwarded IP) returns `200,200,200,429,429` with `Retry-After: 58`.
 
-Apply once in Supabase SQL editor: `supabase/migrations/0001_project_display_order.sql` (done) and `supabase/migrations/0002_site_settings.sql` (pending — enables the footer social icons).
+Apply once in Supabase SQL editor: `supabase/migrations/0001_project_display_order.sql` (done) and `supabase/migrations/0002_site_settings.sql` (done — footer social icons live).
+
+### Session 5 — 2026-05-24 — Perf pass + About page + fully editable site
+
+Scope: ship a real perf round, an About page, and turn every piece of copy on the public site into something editable from `/admin/settings`. Three migrations land in this session — all applied to production.
+
+Perf
+- `next.config.js`: `images.remotePatterns` whitelists `*.supabase.co/storage/v1/object/public/**`; `formats: ["image/avif","image/webp"]`. Vercel's image optimizer now rewrites every bucket URL.
+- All raw `<img>` → `<Image fill>` with realistic `sizes` strings: hero portrait (priority, 320/60vw/420), project card thumbs (100vw/50vw/33vw), detail banners (priority, 100vw → 1240). Admin preview banners stay lazy.
+- `<link rel="preconnect">` to the Supabase Storage origin in `<head>` so the TLS handshake starts before the hero image request.
+- Verified: headshot served as 30 KB AVIF (was 99 KB JPEG) — roughly 70% smaller, no quality loss.
+
+About page
+- New `/about` route (server-rendered, ISR 60s). Hero with serif "Hi, I'm Deepti." + portrait, then four prose sections (intro, experience, education, certifications, skills) all driven by Tiptap-edited HTML in `site_settings`.
+- "About" link added to public nav (desktop + mobile drawer) and to `app/sitemap.ts`.
+- Placeholder content invites editing — real LinkedIn copy is pasted via `/admin/settings → About`.
+
+Editable site
+- `lib/settings.ts` now exports `SETTING_DEFAULTS` (full record of every key + its fallback). `getSettings()` always returns the full `Settings` object — missing rows fall back to defaults so pages never break mid-edit or before a migration runs.
+- 20+ keys total: 3 social, 10 hero (eyebrow, bio, 3 pills, image URL, 2 CTA label/href pairs), 4 contact (email, location, availability, response time), 5 about (intro/experience/education/certifications/skills as HTML).
+- `Hero.tsx` and `Contact.tsx` refactored as `async` server components reading from settings. The brand headline ("Energy Policy & Regulations Expert.") stays hardcoded — it's identity, not copy.
+- `/admin/settings` revamped into a 5-tab editor (Site / Hero image / Contact / About / Social) backed by `components/admin/SettingsForm.tsx`. Tiptap is reused for the About sections; `ImageUpload` is reused for the hero image (uploads land in the `portfolio-media` bucket).
+- One "Save all settings" button upserts every key in a single request.
+
+Polish
+- Hero grid was `align-items: end` (from the prototype) — pushed the text column to align with the bottom of the taller portrait column, leaving a big empty band above the eyebrow on desktop. Switched to `align-items: start` so both columns flow from the top.
+
+Migrations applied (all in Supabase SQL editor, all `on conflict do nothing` so re-running is a no-op):
+- `0001_project_display_order.sql` — projects.display_order column for drag-reorder
+- `0002_site_settings.sql` — site_settings table + initial social seeds
+- `0003_settings_hero_about.sql` — hero / contact / about default seeds
+
+Live and verified: https://portfolio-website-xi-ivory.vercel.app/ and /about both 200 with content fed from `site_settings`.
