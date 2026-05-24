@@ -3,6 +3,7 @@ import { Instrument_Serif, DM_Sans, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import NextTopLoader from "nextjs-toploader";
 import NavScroll from "@/components/ui/NavScroll";
 import "./globals.css";
 
@@ -71,6 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         )}
       </head>
       <body>
+        <NextTopLoader color="#c46a5a" height={2} showSpinner={false} crawlSpeed={200} speed={300} shadow="0 0 8px #c46a5a" />
         <a href="#main" className="skip-link">Skip to content</a>
         <NavScroll />
         {children}

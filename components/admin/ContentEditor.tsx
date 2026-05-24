@@ -41,6 +41,9 @@ export default function ContentEditor({
   const router = useRouter();
   const [pending, start] = useTransition();
   const [form, setForm] = useState<Initial>(initial);
+  // When true, slug auto-tracks title. Flipped to false the moment the
+  // user edits the slug field manually, so we don't clobber their edit.
+  const [slugAuto, setSlugAuto] = useState(mode === "create");
 
   function currentTags(): string[] {
     return form.tags.split(",").map((t) => t.trim()).filter(Boolean);
@@ -56,8 +59,24 @@ export default function ContentEditor({
     setForm((s) => ({ ...s, [key]: value }));
   }
 
+  function onTitleChange(value: string) {
+    setForm((s) => {
+      const next: Initial = { ...s, title: value };
+      if (slugAuto) {
+        next.slug = slugify(value, { lower: true, strict: true });
+      }
+      return next;
+    });
+  }
+
+  function onSlugChange(value: string) {
+    setSlugAuto(false);
+    update("slug", value);
+  }
+
   function autoSlug() {
     if (!form.title) return;
+    setSlugAuto(true);
     update("slug", slugify(form.title, { lower: true, strict: true }));
   }
 
@@ -105,12 +124,12 @@ export default function ContentEditor({
       <div className="row">
         <div>
           <label>Title</label>
-          <input type="text" value={form.title} onChange={(e) => update("title", e.target.value)} onBlur={() => !form.slug && autoSlug()} />
+          <input type="text" value={form.title} onChange={(e) => onTitleChange(e.target.value)} />
         </div>
         <div>
           <label>Slug</label>
           <div style={{ display: "flex", gap: 8 }}>
-            <input type="text" value={form.slug} onChange={(e) => update("slug", e.target.value)} />
+            <input type="text" value={form.slug} onChange={(e) => onSlugChange(e.target.value)} />
             <button type="button" className="btn-link" onClick={autoSlug}>From title</button>
           </div>
         </div>
