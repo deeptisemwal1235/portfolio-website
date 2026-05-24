@@ -2,7 +2,9 @@ import Link from "next/link";
 import { getPublishedPosts, formatPostDate } from "@/lib/db";
 
 export default async function Analysis() {
-  const posts = await getPublishedPosts();
+  const all = await getPublishedPosts();
+  const posts = all.slice(0, 6);
+  const hasMore = all.length > 6;
 
   return (
     <section className="s" id="analysis">
@@ -37,6 +39,11 @@ export default async function Analysis() {
                 </span>
               </Link>
             ))}
+          </div>
+        )}
+        {hasMore && (
+          <div style={{ marginTop: 36, textAlign: "right" }}>
+            <Link href="/analysis" className="btn btn-ghost">See all analysis ↗</Link>
           </div>
         )}
       </div>

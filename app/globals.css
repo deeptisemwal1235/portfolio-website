@@ -514,3 +514,23 @@ section.s { padding: clamp(80px, 11vw, 140px) 0; position: relative; }
   transition: top .2s ease;
 }
 .skip-link:focus { top: 8px; outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Index pages (/projects, /analysis) shared hero */
+.index-hero {
+  padding: clamp(60px, 9vw, 100px) 0 clamp(40px, 6vw, 60px);
+  border-bottom: 1px solid var(--rule);
+}
+.index-hero .eyebrow { display: block; margin-bottom: 18px; }
+.index-hero h1 {
+  font-family: var(--serif); font-weight: 400;
+  font-size: clamp(48px, 8vw, 96px);
+  line-height: 0.94; letter-spacing: -0.025em; color: var(--ink);
+}
+.index-hero h1 em { font-style: italic; color: var(--accent-deep); }
+.index-hero .lede { margin-top: 24px; max-width: 60ch; font-size: 17px; color: var(--ink-2); }
+.index-cat-heading {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--ink-3);
+  margin-bottom: 24px;
+  padding-bottom: 12px; border-bottom: 1px solid var(--rule);
+}

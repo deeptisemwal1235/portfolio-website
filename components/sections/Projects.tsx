@@ -4,7 +4,10 @@ import { getPublishedProjects } from "@/lib/db";
 import { PROJECT_THUMB_SVG, thumbClassFor } from "@/lib/svgMap";
 
 export default async function Projects() {
-  const projects = await getPublishedProjects();
+  const all = await getPublishedProjects();
+  // Home shows up to 3; the rest are accessible via /projects.
+  const projects = all.slice(0, 3);
+  const hasMore = all.length > 3;
 
   return (
     <section className="s projects" id="projects">
@@ -54,6 +57,11 @@ export default async function Projects() {
             );
           })}
         </div>
+        {hasMore && (
+          <div style={{ marginTop: 36, textAlign: "right" }}>
+            <Link className="btn btn-ghost" href="/projects">See all projects ↗</Link>
+          </div>
+        )}
       </div>
     </section>
   );
