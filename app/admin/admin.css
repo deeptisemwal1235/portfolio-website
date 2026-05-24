@@ -109,3 +109,37 @@
   transition: background .15s ease, color .15s ease, border-color .15s ease;
 }
 .tag-chip:hover { background: var(--paper); border-color: var(--rule-2); color: var(--ink); }
+
+/* Drag-to-reorder list (admin) */
+.order-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.order-row {
+  display: grid;
+  grid-template-columns: 24px 36px 1fr 60px 110px 80px;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 16px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: grab;
+  transition: background .15s ease, border-color .15s ease, transform .15s ease;
+}
+.order-row:hover { border-color: var(--rule-2); }
+.order-row.dragging { opacity: 0.4; transform: scale(0.99); }
+.drag-handle {
+  color: var(--ink-3); font-size: 18px; letter-spacing: -2px; user-select: none;
+}
+.order-num {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em;
+  color: var(--ink-3);
+}
+.order-title { font-family: var(--serif); font-size: 17px; color: var(--ink); }
+.order-year { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+.order-arrows { display: flex; gap: 4px; justify-content: flex-end; }
+.order-arrows button {
+  background: transparent; border: 1px solid var(--rule); padding: 4px 10px;
+  font-family: var(--mono); cursor: pointer; border-radius: 4px;
+}
+.order-arrows button:hover:not(:disabled) { background: var(--bg-2); }
+.order-arrows button:disabled { opacity: 0.3; cursor: not-allowed; }

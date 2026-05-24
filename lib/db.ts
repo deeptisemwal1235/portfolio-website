@@ -47,10 +47,13 @@ export async function listPublishedPostsForSitemap(): Promise<{ slug: string; up
 
 export async function getPublishedProjects(): Promise<ProjectRow[]> {
   const sb = createSupabaseServerClient();
+  // display_order first (nullsFirst:false so unranked rows fall to the bottom),
+  // then year desc, then created_at desc as final tiebreakers.
   const { data, error } = await sb
     .from("projects")
     .select("*")
     .eq("published", true)
+    .order("display_order", { ascending: true, nullsFirst: false })
     .order("year", { ascending: false })
     .order("created_at", { ascending: false });
   if (error) {

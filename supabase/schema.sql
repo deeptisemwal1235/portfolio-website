@@ -16,10 +16,13 @@ create table if not exists projects (
   category text,
   tags text[],
   read_time text,
+  display_order int,
   published boolean default false,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
+create index if not exists projects_display_order_idx
+  on projects (display_order);
 
 create table if not exists posts (
   id uuid primary key default gen_random_uuid(),
