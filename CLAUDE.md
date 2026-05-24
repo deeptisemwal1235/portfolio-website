@@ -550,3 +550,47 @@ Added:
 Out of scope (Session 3+): live deploy verification (waiting on user to create Supabase + Resend accounts and paste keys), favicon iteration, draft preview routes, project/post drag-to-reorder.
 
 Verified: `npm run build` succeeds with placeholder env vars; 11 routes generated (4 admin, 2 dynamic detail, public home, login, not-found, api). Middleware compiled to 82.4 kB.
+
+### Session 3 — 2026-05-24 — Supabase wired, seeded, live on Vercel
+
+Scope: connect the Session 2 scaffold to a real Supabase project, seed it, and ship it to Vercel. No code changes — pure configuration + deploy.
+
+Done:
+- `.env.local` populated with Supabase project `brtymmjustqesyworyav`, the new-format API keys (`sb_publishable_*` as anon, `sb_secret_*` as service role), Resend key, and `CONTACT_TO_EMAIL`. File is gitignored.
+- Ran `supabase/schema.sql` in the Supabase SQL editor → `projects`, `posts`, `contacts` tables + RLS + Storage bucket policies in place.
+- Created Storage bucket `portfolio-media` (public read).
+- Created admin auth user in Supabase Auth (email `deeptisemwal1235@gmail.com`).
+- Ran `npx tsx scripts/seed.ts` → 3 projects + 6 posts upserted successfully.
+- `npm run build` against live Supabase: 15 routes (public home + 3 project SSG + 6 analysis SSG + 6 admin + api + not-found), middleware 82.4 kB.
+- Imported the GitHub repo into Vercel as `portfolio-website`, framework auto-detected Next.js, env vars pasted into Production + Preview + Development scope.
+- **Live:** https://portfolio-website-xi-ivory.vercel.app
+- Smoke-tested live: `/`, `/projects/micro-wind-turbine-cost-benefit-2025`, `/analysis/cbg-satat-2-0-bankable`, `/admin` all return 200.
+
+---
+
+## Backlog (deferred — pick up in future sessions)
+
+Operational
+- Add the production Vercel URL to **Supabase → Authentication → URL Configuration** (`Site URL` + `Redirect URLs` `https://portfolio-website-xi-ivory.vercel.app/**`) so `/admin` login works reliably on the production domain across all browsers.
+- Verify a custom Resend sending domain (currently emails go from the sandbox `onboarding@resend.dev`, which is rate-limited and may land in spam). Once verified, set `RESEND_FROM_EMAIL=Portfolio <contact@yourdomain.com>` in Vercel env.
+- Point a real custom domain at the Vercel project (e.g. `deeptisemwal.com`) and update the Supabase Site URL accordingly.
+
+Product polish
+- Replace the gradient/SVG placeholder thumbs on admin-created projects with real cover images (upload via the admin editor — the path is already wired through Supabase Storage).
+- Author the OG image / Twitter card for social sharing (currently the inline-SVG DS favicon is the only visual metadata).
+- Add a sitemap.xml + robots.txt route.
+
+CMS UX
+- Draft-preview route for unpublished projects/posts so they can be reviewed before flipping `published: true`.
+- Drag-to-reorder for the project grid (the asymmetric layout currently relies on `created_at` ordering).
+- Tag autocomplete in the editor instead of free-text comma-separated input.
+- Per-row "view live" link from the admin dashboard.
+
+Reliability
+- Add a `/api/contact` rate-limit (one submission per IP per minute) to keep the free-tier Supabase + Resend quotas safe.
+- Wire up Vercel Analytics (free hobby tier) for basic page-view + Core Web Vitals data.
+- Add a tiny GitHub Actions workflow that runs `npm run build` on every PR — Vercel already does this on its own preview deploys, but a status check on the PR is cleaner.
+
+Content
+- Upload `headshot.png` to Supabase Storage and switch the hero portrait to that URL (currently served from `public/`, fine for now but inconsistent with the rest of the media pipeline).
+- Write the next 1–2 analysis posts directly through `/admin` to validate the end-to-end author workflow.
