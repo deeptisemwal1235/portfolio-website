@@ -23,14 +23,21 @@ export default function ContactForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      if (!res.ok) throw new Error("Request failed");
+      if (!res.ok) {
+        const payload = await res.json().catch(() => null);
+        const msg = payload?.error || (res.status === 429
+          ? "Too many requests — please wait a minute and try again."
+          : "Could not send — please try again");
+        throw new Error(msg);
+      }
       setStatus({ text: "✓ Message sent — Deepti will reply within 48 hrs", ok: true });
       toast.success("Message sent — reply within 48 hrs");
       form.reset();
       setTimeout(() => setStatus(null), 6000);
-    } catch {
-      setStatus({ text: "✕ Could not send — please try again", ok: false });
-      toast.error("Could not send — please try again");
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Could not send — please try again";
+      setStatus({ text: `✕ ${msg}`, ok: false });
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
