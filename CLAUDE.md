@@ -577,9 +577,6 @@ Legend: **🔥** high-impact / do-soon · **📦** quality-of-life · **🌱** n
 - 🌱 Point a real custom domain at the Vercel project (e.g. `deeptisemwal.com`) and update the Supabase Site URL accordingly.
 
 ### UI / UX
-- 🔥 Hero headline ("Energy Policy & Regulations Expert.") is hardcoded — make it editable from `/admin/settings`.
-- 🔥 Hero ticker words ("Tariff Orders · ARR · …") hardcoded — pull from settings or tags.
-- 🔥 Skills (6 cards), Services (4 rows), and section titles ("How I help.", "Areas of expertise.", etc.) all hardcoded. Add a `home_sections` table or settings keys so they're editable.
 - 📦 Admin-created projects with no cover image always get `thumb-a` gradient — rotate a/b/c by index instead.
 - 📦 Footer is three-up center alignment — could tighten: name + tagline left, social right.
 - 📦 No favicon variations (apple-touch-icon, maskable). Single SVG works but install on mobile looks generic.
@@ -587,9 +584,6 @@ Legend: **🔥** high-impact / do-soon · **📦** quality-of-life · **🌱** n
 - 🌱 Pause ticker on hover; respect `prefers-reduced-motion`.
 
 ### Features missing
-- 🔥 **`/admin/messages`** — read the `contacts` table from inside admin. Filter unread, mark read, delete. Right now contact-form submissions are only visible via the Supabase dashboard.
-- 🔥 **Index pages**: `/projects` and `/analysis` listing every published item. Home only shows the top 3/6 — older content has no browse URL beyond the direct slug.
-- 🔥 **Reading-time auto-calc** — `lib/utils.calcReadTime(html)` plus prefill on save. Editor currently asks for manual entry.
 - 📦 **Category filter** on analysis once post count > ~8.
 - 📦 **Related-posts** widget on each article (by shared category/tags).
 - 📦 **Share buttons** on articles (X, LinkedIn, copy-link).
@@ -604,19 +598,14 @@ Legend: **🔥** high-impact / do-soon · **📦** quality-of-life · **🌱** n
 - 🌱 Soft-delete / trash with 30-day restore.
 
 ### SEO
-- 🔥 **Person JSON-LD missing `sameAs`** — add LinkedIn + X URLs from `site_settings`. Single biggest entity-linking miss for Google's Knowledge Graph.
-- 🔥 **Per-article OG images** — generate at `app/analysis/[slug]/opengraph-image.tsx` using `ImageResponse` with title + category. Doubles social-share CTR in practice.
-- 🔥 **`<meta name="author">`** and OG `article:author` / `article:published_time` / `article:tag` tags missing on article pages.
-- 📦 **Person JSON-LD `knowsAbout`** — array of the 6 expertise areas. Strengthens entity association.
 - 📦 **Breadcrumb JSON-LD** on detail pages (`Home > Analysis > {title}`).
-- 📦 **Canonical URLs** explicit on every page (Next does it implicitly; explicit is safer for syndication).
+- 📦 **Canonical URLs** explicit on home + index pages (detail pages done in Session 6).
 - 📦 Project pages use `Article` — `TechArticle` or `ScholarlyArticle` would be more precise.
-- 📦 Add `lang="en-IN"` to `<html>` and declare `<link rel="alternate" hreflang>` even at single-locale.
+- 📦 Declare `<link rel="alternate" hreflang>` even at single-locale.
 - 🌱 Add `/feed.xml` (RSS/Atom) — energy analysts use feed readers.
 - 🌱 Verify ownership in Google Search Console + Bing Webmaster + submit sitemap.
 
 ### AI / LLM optimization
-- 🔥 **`/llms.txt`** — emerging standard at https://llmstxt.org. Tells ChatGPT/Claude/Perplexity what your site is about. Trivial to write.
 - 📦 **Structured Service schema** for the 4 services — appears in AI assistant "what does she offer" answers.
 - 📦 **FAQ block on `/about`** ("What does Deepti consult on?", "Where is she based?") with FAQPage JSON-LD. AI loves Q&A.
 - 🌱 **Author bio block** on every article with structured Person data — helps AI cite you, not just the article.
@@ -630,7 +619,6 @@ Legend: **🔥** high-impact / do-soon · **📦** quality-of-life · **🌱** n
 - 🌱 Preload the hero image with `<link rel="preload" as="image">` for absolute fastest LCP.
 
 ### Accessibility
-- 🔥 **Skip-to-content link** at the top of `<body>` — important for keyboard / screen-reader users.
 - 📦 **Focus trap** inside open mobile drawer — tab currently leaks to elements behind the drawer.
 - 📦 Respect `prefers-reduced-motion` — disable ticker, reveal transitions, hover translates.
 - 📦 Color contrast: `--ink-3` (#806258) on `--bg-2` (#f0d2c0) is ~3.4:1 — below WCAG AA 4.5:1 for body. Bump `--ink-3` to ~#6a4f44.
@@ -639,10 +627,10 @@ Legend: **🔥** high-impact / do-soon · **📦** quality-of-life · **🌱** n
 - 🌱 Add `aria-describedby` from form fields to help/error text.
 
 ### Security
-- 🔥 **Content Security Policy** headers via `next.config.js`. Without one, an XSS in any vendor script can exfiltrate data.
 - 📦 **Origin check on `/api/contact`** — drop requests not from your own domain or empty Origin (kills most bots).
 - 📦 Sanitize Tiptap HTML server-side (DOMPurify) — belt-and-suspenders against admin-side mistakes.
 - 📦 Add a honeypot field to the contact form — kills 90% of bot submissions instantly.
+- 🌱 Tighten CSP to nonce-based (drop `'unsafe-inline'` from script-src).
 - 🌱 2FA on Supabase admin login.
 
 ### Reliability / observability
@@ -652,8 +640,6 @@ Legend: **🔥** high-impact / do-soon · **📦** quality-of-life · **🌱** n
 - 🌱 UptimeRobot or BetterStack ping every 5 min.
 
 ### Admin UX
-- 🔥 **Loading state on every admin click** — currently clicking a row, a tab, "Save", "Delete", or any nav link gives zero feedback until the new state renders. Add a global top-of-page progress bar (e.g. `nextjs-toploader`) plus per-button spinner/disabled state so the user never wonders if their click registered.
-- 🔥 **Auto-slug update only if user hasn't touched the slug field** — currently you click "From title" manually. Should auto-update while title is being typed AND slug field is empty/derived.
 - 📦 **`Cmd+S` shortcut** in editor to save.
 - 📦 **Unsaved-changes warning** when navigating away from the editor.
 - 📦 **Visible link** to draft preview directly from the editor (currently have to go back to dashboard).
@@ -661,14 +647,13 @@ Legend: **🔥** high-impact / do-soon · **📦** quality-of-life · **🌱** n
 - 🌱 Mobile-friendly admin (currently desktop-only assumption).
 - 🌱 "Duplicate post" button to clone a post as starter.
 
-### Content
+### Content (user tasks)
 - 🔥 **Real About page content** — replace the four placeholder Tiptap sections at `/admin/settings → About`.
 - 🔥 **At least one project cover image** uploaded — proves the upload flow works and looks great on social.
 - 📦 **Testimonials section** with 2-3 quotes from clients/professors. Trust signal.
 - 📦 Write the next 1–2 analysis posts through admin to validate the end-to-end author flow.
 
 ### Dev experience
-- 📦 `@next/bundle-analyzer` (mentioned above).
 - 🌱 Vitest + Playwright for at least one smoke test per public route.
 - 🌱 Storybook for the section components.
 - 🌱 Expand README with full "fork this and use it" walkthrough.
@@ -744,3 +729,59 @@ Migrations applied (all in Supabase SQL editor, all `on conflict do nothing` so 
 - `0003_settings_hero_about.sql` — hero / contact / about default seeds
 
 Live and verified: https://portfolio-website-xi-ivory.vercel.app/ and /about both 200 with content fed from `site_settings`.
+
+### Session 6 — 2026-05-25 — 11 🔥 backlog items + admin loading UX
+
+Scope: cleared every engineering 🔥 backlog item in one stretch. 9 logical commits, three migrations applied.
+
+SEO + AI + a11y (A)
+- `Person` JSON-LD now ships `sameAs` (LinkedIn + X + GitHub from settings) and `knowsAbout` (6 core expertise areas). Article schema's author reuses the enriched Person.
+- `/llms.txt` route emits the llmstxt.org markdown manifest dynamically — every project + post auto-listed.
+- Skip-to-content link in `<body>`, lands at `<main id="main">` on the home page.
+- `<html lang="en">` → `"en-IN"`.
+- Article + project detail metadata now emits `article:published_time`, `article:modified_time`, `article:author`, `article:section`, `article:tag` OG tags + `<meta name="author">` + canonical URL.
+
+Per-slug OG (B)
+- `lib/og.tsx` shared builder (Rose Clay flat bg, DS mark, § CATEGORY eyebrow, big serif title that auto-scales 88px → 76px → 64px for long titles).
+- `app/analysis/[slug]/opengraph-image.tsx` + `app/projects/[slug]/opengraph-image.tsx`. Shared cards on LinkedIn/X/WhatsApp now show the actual title + category.
+
+Reading time (C)
+- `lib/utils.calcReadTime(html)` — strip tags, 220 wpm, "N min read".
+- `ContentEditor.save()` fills `read_time` automatically when blank; "Auto" button next to the field recomputes from current content.
+
+`/admin/messages` (D)
+- New route lists every contacts row with name/email/subject/date and unread accent. Expand to read; expansion auto-marks read.
+- All/Unread filter tabs. Per-row: reply by email (mailto), toggle read, delete (confirm gate).
+- Migration `0004_contacts_read_flag.sql` adds `contacts.read` + RLS update/delete policies.
+
+Index pages (E)
+- `/projects` lists every published project in the asymmetric grid.
+- `/analysis` lists every published post; groups by category when count > 6.
+- Home Projects + Analysis sections show top 3/6 with "See all" CTA when more exists.
+- `sitemap.xml` includes both index routes.
+
+Admin loading UX (F)
+- `nextjs-toploader` mounted in `app/layout.tsx` — every route change shows a 2px terracotta progress bar at the top. No more silent clicks.
+- `ContentEditor` slug now auto-tracks the title field while typing. Editing the slug directly flips `slugAuto` off so manual edits aren't clobbered.
+
+Editable hero + ticker + section heads (G)
+- New settings: `hero_headline_html`, `ticker_words`, plus `section_{skills,services,projects,analysis,contact}_{eyebrow,title_html,lede}` (15 keys).
+- Hero, Skills, Services, Projects, Analysis, Contact all read from settings.
+- `/admin/settings` adds "Hero" and "Section heads" tabs.
+- Migration `0005_settings_hero_sections.sql`.
+
+Editable skills + services cards (H)
+- 20 new keys: `skill_{1..6}_{title,desc}` + `service_{1..4}_{title,desc}`.
+- Glyphs stay hardcoded by index (brand iconography).
+- `/admin/settings` adds "Skills (6)" and "Services (4)" tabs.
+- Migration `0006_settings_skills_services.sql`.
+
+Security headers (I)
+- `next.config.js` `headers()` block: CSP (with `'unsafe-inline'` for now — Next hydration + Tiptap + toploader all need it), `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` denying camera/mic/geo/FLoC, `X-Content-Type-Options: nosniff`. Tightening to nonce-based CSP is a future hardening step.
+
+Migrations applied in production:
+- `0004_contacts_read_flag.sql` ✅
+- `0005_settings_hero_sections.sql` ✅
+- `0006_settings_skills_services.sql` ✅
+
+`/admin/settings` now has 7 tabs covering ~50 editable keys. Every visible word on the home page (except brand iconography) can be edited without touching code.
