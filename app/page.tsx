@@ -6,10 +6,13 @@ import Projects from "@/components/sections/Projects";
 import Analysis from "@/components/sections/Analysis";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/ui/Footer";
+import { JsonLd, websiteJsonLd, personJsonLd } from "@/lib/jsonLd";
 
 export default function HomePage() {
   return (
     <>
+      <JsonLd data={websiteJsonLd()} />
+      <JsonLd data={personJsonLd()} />
       <Navbar />
       <Hero />
       <Skills />

@@ -4,6 +4,7 @@ import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import { getProjectBySlug, listPublishedProjectSlugs } from "@/lib/db";
 import { thumbClassFor } from "@/lib/svgMap";
+import { JsonLd, articleJsonLd, SITE_URL } from "@/lib/jsonLd";
 
 export const revalidate = 60;
 
@@ -24,8 +25,21 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
 
   const thumb = thumbClassFor(p.slug);
 
+  const ld = articleJsonLd({
+    kind: "Article",
+    url: `${SITE_URL}/projects/${p.slug}`,
+    title: p.title,
+    description: p.excerpt,
+    image: p.cover_image_url,
+    datePublished: p.created_at,
+    dateModified: p.updated_at,
+    category: p.category,
+    tags: p.tags,
+  });
+
   return (
     <>
+      <JsonLd data={ld} />
       <Navbar home={false} />
       <header className="detail-hero">
         <div className="container">
