@@ -3,6 +3,7 @@ import Image from "next/image";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import { getSettings } from "@/lib/settings";
+import { JsonLd, faqJsonLd } from "@/lib/jsonLd";
 
 export const revalidate = 60;
 
@@ -14,8 +15,15 @@ export const metadata: Metadata = {
 
 export default async function AboutPage() {
   const s = await getSettings();
+  const faqs = [1, 2, 3, 4, 5]
+    .map((i) => ({
+      question: s[`faq_${i}_q` as keyof typeof s],
+      answer: s[`faq_${i}_a` as keyof typeof s],
+    }))
+    .filter((f) => f.question && f.answer);
   return (
     <>
+      {faqs.length > 0 && <JsonLd data={faqJsonLd(faqs)} />}
       <Navbar home={false} />
 
       <header className="about-hero">
@@ -50,6 +58,18 @@ export default async function AboutPage() {
           <Section html={s.about_education_html} />
           <Section html={s.about_certifications_html} />
           <Section html={s.about_skills_html} />
+
+          {faqs.length > 0 && (
+            <section className="faq-section" aria-labelledby="faq-heading">
+              <h2 id="faq-heading" className="faq-heading">Frequently asked</h2>
+              {faqs.map((f, i) => (
+                <details className="faq-item" key={i}>
+                  <summary>{f.question}</summary>
+                  <p className="faq-answer">{f.answer}</p>
+                </details>
+              ))}
+            </section>
+          )}
 
           <div className="about-cta">
             <p className="lede">

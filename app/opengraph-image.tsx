@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 
-export const runtime = "edge";
+// Pre-generated at build time (no `runtime = "edge"`) so the social card
+// ships as a static asset on the CDN, not an edge invocation per share.
 export const alt = "Deepti Semwal — Energy Policy & Regulations Expert";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";

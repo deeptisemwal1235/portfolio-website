@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const LINKS = [
   { href: "#skills", label: "Skills" },
@@ -16,12 +16,39 @@ const LINKS = [
 export default function Navbar({ home = true }: { home?: boolean }) {
   const prefix = home ? "" : "/";
   const [open, setOpen] = useState(false);
+  const drawerRef = useRef<HTMLDivElement | null>(null);
+  const burgerRef = useRef<HTMLButtonElement | null>(null);
 
-  // Close drawer on Escape; lock body scroll while open
+  // Close drawer on Escape; lock body scroll while open; trap focus inside.
   useEffect(() => {
     if (!open) return;
+    const drawer = drawerRef.current;
+    const focusable = drawer
+      ? Array.from(
+          drawer.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          )
+        )
+      : [];
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    // Move focus into the drawer when it opens.
+    first?.focus();
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        burgerRef.current?.focus();
+        return;
+      }
+      if (e.key !== "Tab" || focusable.length === 0) return;
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last?.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first?.focus();
+      }
     };
     document.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
@@ -55,6 +82,7 @@ export default function Navbar({ home = true }: { home?: boolean }) {
           <a className="nav-cta" href={`${prefix}#contact`}>Let&apos;s Talk →</a>
 
           <button
+            ref={burgerRef}
             className={`nav-burger${open ? " open" : ""}`}
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
@@ -70,9 +98,12 @@ export default function Navbar({ home = true }: { home?: boolean }) {
       {/* Rendered as a sibling of <nav> (NOT a child) so position:fixed escapes
           the nav's backdrop-filter containing block. */}
       <div
+        ref={drawerRef}
         id="mobile-drawer"
         className={`nav-drawer${open ? " open" : ""}`}
         aria-hidden={!open}
+        aria-modal={open ? "true" : undefined}
+        aria-label="Site navigation"
         role="dialog"
       >
         <ul className="nav-drawer-links">

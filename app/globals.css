@@ -372,6 +372,46 @@ section.s { padding: clamp(80px, 11vw, 140px) 0; position: relative; }
 .reveal { opacity: 0; transform: translateY(28px); transition: opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1); }
 .reveal.in { opacity: 1; transform: translateY(0); }
 
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .ticker-track { animation: none !important; }
+  .reveal { opacity: 1 !important; transform: none !important; }
+}
+
+/* ---------- Filter chips (analysis index) ---------- */
+.filter-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 40px; }
+.filter-chip { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; padding: 9px 16px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink-2); border-radius: 999px; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 8px; }
+.filter-chip:hover { background: var(--bg-2); color: var(--ink); }
+.filter-chip.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.filter-chip-count { font-size: 10px; opacity: 0.7; }
+
+/* ---------- Share row ---------- */
+.share-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 32px 0; margin-top: 24px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.share-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); margin-right: 4px; }
+.share-btn { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; padding: 8px 14px; border: 1px solid var(--rule-2); background: var(--paper); color: var(--ink); border-radius: 999px; cursor: pointer; text-decoration: none; transition: all 0.18s ease; }
+.share-btn:hover { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+
+/* ---------- Related posts ---------- */
+.related-posts { margin-top: 56px; padding-top: 40px; border-top: 1px solid var(--rule); }
+.related-heading { font-family: var(--serif); font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.01em; color: var(--ink); margin-bottom: 28px; }
+
+/* ---------- FAQ block (about) ---------- */
+.faq-section { margin-top: 64px; padding-top: 40px; border-top: 1px solid var(--rule); }
+.faq-heading { font-family: var(--serif); font-size: clamp(32px, 4.5vw, 48px); letter-spacing: -0.01em; color: var(--ink); margin-bottom: 36px; }
+.faq-item { border-bottom: 1px solid var(--rule); padding: 22px 0; }
+.faq-item summary { cursor: pointer; font-family: var(--sans); font-size: 18px; font-weight: 500; color: var(--ink); list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after { content: "+"; font-family: var(--serif); font-size: 28px; color: var(--accent); transition: transform 0.2s ease; }
+.faq-item[open] summary::after { content: "−"; }
+.faq-item summary:hover { color: var(--accent-deep); }
+.faq-answer { padding-top: 14px; color: var(--ink-2); line-height: 1.7; font-size: 16px; }
+
 /* ===================== Article / Project Detail ===================== */
 .detail-hero { padding: 80px 0 60px; border-bottom: 1px solid var(--rule); }
 .back-link { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-2); display: inline-flex; align-items: center; gap: 8px; margin-bottom: 32px; }

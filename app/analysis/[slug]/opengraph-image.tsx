@@ -1,7 +1,12 @@
-import { getPostBySlug, formatPostDate } from "@/lib/db";
+import { getPostBySlug, formatPostDate, listPublishedPostSlugs } from "@/lib/db";
+
+export async function generateStaticParams() {
+  return (await listPublishedPostSlugs()).map((slug) => ({ slug }));
+}
 import { renderArticleOg, ogSize, ogContentType } from "@/lib/og";
 
-export const runtime = "edge";
+// Pre-rendered at build time via generateImageMetadata + the slug's
+// generateStaticParams. Edge runtime removed so each card is a static asset.
 export const size = ogSize;
 export const contentType = ogContentType;
 export const alt = "Article cover";

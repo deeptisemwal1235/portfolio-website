@@ -140,6 +140,27 @@ export async function listAllTags(table: "projects" | "posts"): Promise<string[]
   return Array.from(set).sort((a, b) => a.localeCompare(b));
 }
 
+/**
+ * Top N other posts ranked by shared tags then same category. Excludes the
+ * current slug. Used for "related reading" widget on article pages.
+ */
+export async function getRelatedPosts(
+  current: { slug: string; category: string | null; tags: string[] | null },
+  limit = 3
+): Promise<PostRow[]> {
+  const all = await getPublishedPosts();
+  const others = all.filter((p) => p.slug !== current.slug);
+  const tags = new Set((current.tags ?? []).map((t) => t.toLowerCase()));
+  const scored = others.map((p) => {
+    const ptags = (p.tags ?? []).map((t) => t.toLowerCase());
+    const tagOverlap = ptags.filter((t) => tags.has(t)).length;
+    const catMatch = current.category && p.category === current.category ? 1 : 0;
+    return { p, score: tagOverlap * 2 + catMatch };
+  });
+  scored.sort((a, b) => b.score - a.score);
+  return scored.slice(0, limit).map((s) => s.p);
+}
+
 export function formatPostDate(iso: string | null): string {
   if (!iso) return "";
   const d = new Date(iso);

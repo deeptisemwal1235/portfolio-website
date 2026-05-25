@@ -44,7 +44,31 @@ function clientIp(req: Request): string {
   return req.headers.get("x-real-ip") ?? "unknown";
 }
 
+function originAllowed(req: Request): boolean {
+  const origin = req.headers.get("origin");
+  // Same-origin form posts from the browser always send an Origin header.
+  // Drop everything that doesn't.
+  if (!origin) return false;
+  let host: string;
+  try { host = new URL(origin).host; } catch { return false; }
+  const reqHost = req.headers.get("host") ?? "";
+  if (host === reqHost) return true;
+  // Allow explicitly configured production origin too (for previews proxying
+  // to a different host in front of the same deployment).
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  if (siteUrl) {
+    try { if (new URL(siteUrl).host === host) return true; } catch {}
+  }
+  // Allow *.vercel.app preview deployments hitting their own host.
+  if (host.endsWith(".vercel.app") && host === reqHost) return true;
+  return false;
+}
+
 export async function POST(req: Request) {
+  if (!originAllowed(req)) {
+    console.warn(`[contact] rejected cross-origin/no-origin post — origin=${req.headers.get("origin") ?? "(none)"}`);
+    return NextResponse.json({ ok: false, error: "Bad request" }, { status: 403 });
+  }
   const ip = clientIp(req);
   const rl = rateLimited(ip);
   if (rl.limited) {

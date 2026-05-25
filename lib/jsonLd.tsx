@@ -91,6 +91,18 @@ export function websiteJsonLd() {
   };
 }
 
+export function faqJsonLd(items: { question: string; answer: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((it) => ({
+      "@type": "Question",
+      name: it.question,
+      acceptedAnswer: { "@type": "Answer", text: it.answer },
+    })),
+  };
+}
+
 /** Renders a <script> tag with the JSON-LD payload. Server-safe. */
 export function JsonLd({ data }: { data: unknown }) {
   return (

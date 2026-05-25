@@ -3,7 +3,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
-import { getPostBySlug, listPublishedPostSlugs, formatPostDate } from "@/lib/db";
+import Link from "next/link";
+import { getPostBySlug, listPublishedPostSlugs, formatPostDate, getRelatedPosts } from "@/lib/db";
+import ShareButtons from "@/components/ShareButtons";
 import { thumbClassFor } from "@/lib/svgMap";
 import { JsonLd, articleJsonLd, breadcrumbJsonLd, SITE_URL } from "@/lib/jsonLd";
 import { getSettings } from "@/lib/settings";
@@ -43,6 +45,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 export default async function AnalysisDetailPage({ params }: { params: { slug: string } }) {
   const [p, settings] = await Promise.all([getPostBySlug(params.slug), getSettings()]);
   if (!p) notFound();
+  const related = await getRelatedPosts({ slug: p.slug, category: p.category, tags: p.tags }, 3);
+  const articleUrl = `${SITE_URL}/analysis/${p.slug}`;
 
   const date = formatPostDate(p.published_at);
   const thumb = thumbClassFor(p.slug);
@@ -104,6 +108,32 @@ export default async function AnalysisDetailPage({ params }: { params: { slug: s
 
       <main className="detail-body">
         <article className="container" dangerouslySetInnerHTML={{ __html: p.content ?? "" }} />
+        <div className="container">
+          <ShareButtons url={articleUrl} title={p.title} />
+        </div>
+        {related.length > 0 && (
+          <div className="container">
+            <aside className="related-posts">
+              <h2 className="related-heading">Related reading</h2>
+              <div className="analysis-grid">
+                {related.map((r) => (
+                  <Link className="article" href={`/analysis/${r.slug}`} key={r.slug}>
+                    <div className="article-meta">
+                      <span className="cat">{r.category}</span>
+                      <span>
+                        {formatPostDate(r.published_at)}
+                        {r.read_time ? ` · ${r.read_time}` : ""}
+                      </span>
+                    </div>
+                    <h3>{r.title}</h3>
+                    {r.excerpt && <p>{r.excerpt}</p>}
+                    <span className="read">Read article <span className="arr">↗</span></span>
+                  </Link>
+                ))}
+              </div>
+            </aside>
+          </div>
+        )}
         <div className="container">
           <div className="detail-footer">
             <div>{[date && `Published ${date}`, p.category].filter(Boolean).join(" · ")}</div>

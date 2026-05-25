@@ -7,6 +7,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { SETTING_KEYS, type Settings, type SettingKey } from "@/lib/settings";
 import RichTextEditor from "./RichTextEditor";
 import ImageUpload from "./ImageUpload";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 type FieldType = "text" | "url" | "textarea" | "html";
 
@@ -104,6 +105,22 @@ const TABS: Tab[] = [
     ],
   },
   {
+    id: "faq",
+    label: "FAQ",
+    fields: [
+      { key: "faq_1_q", label: "Q1 — question", type: "text" },
+      { key: "faq_1_a", label: "Q1 — answer", type: "textarea" },
+      { key: "faq_2_q", label: "Q2 — question", type: "text" },
+      { key: "faq_2_a", label: "Q2 — answer", type: "textarea" },
+      { key: "faq_3_q", label: "Q3 — question", type: "text" },
+      { key: "faq_3_a", label: "Q3 — answer", type: "textarea" },
+      { key: "faq_4_q", label: "Q4 — question", type: "text" },
+      { key: "faq_4_a", label: "Q4 — answer", type: "textarea" },
+      { key: "faq_5_q", label: "Q5 — question", type: "text" },
+      { key: "faq_5_a", label: "Q5 — answer", type: "textarea" },
+    ],
+  },
+  {
     id: "social",
     label: "Social",
     fields: [
@@ -130,7 +147,12 @@ export default function SettingsForm({ initial }: { initial: Settings }) {
     start(async () => {
       const sb = createSupabaseBrowserClient();
       // Save every key — small payload, simplest to reason about.
-      const rows = SETTING_KEYS.map((k) => ({ key: k, value: (form[k] ?? "").toString() }));
+      const rows = SETTING_KEYS.map((k) => {
+        let value = (form[k] ?? "").toString();
+        // Sanitize any HTML-bearing key before persistence.
+        if (k.endsWith("_html")) value = sanitizeHtml(value);
+        return { key: k, value };
+      });
       const { error } = await sb.from("site_settings").upsert(rows, { onConflict: "key" });
       if (error) {
         toast.error(error.message);

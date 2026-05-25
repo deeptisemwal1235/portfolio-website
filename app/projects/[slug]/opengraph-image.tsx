@@ -1,7 +1,11 @@
-import { getProjectBySlug } from "@/lib/db";
+import { getProjectBySlug, listPublishedProjectSlugs } from "@/lib/db";
+
+export async function generateStaticParams() {
+  return (await listPublishedProjectSlugs()).map((slug) => ({ slug }));
+}
 import { renderArticleOg, ogSize, ogContentType } from "@/lib/og";
 
-export const runtime = "edge";
+// Pre-rendered at build (no edge runtime). Static asset on CDN per slug.
 export const size = ogSize;
 export const contentType = ogContentType;
 export const alt = "Project cover";

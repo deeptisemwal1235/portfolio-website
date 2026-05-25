@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import slugify from "slugify";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { calcReadTime } from "@/lib/utils";
+import { sanitizeHtml } from "@/lib/sanitize";
 import RichTextEditor from "./RichTextEditor";
 import ImageUpload from "./ImageUpload";
 
@@ -123,13 +124,16 @@ export default function ContentEditor({
     }
     start(async () => {
       const sb = createSupabaseBrowserClient();
+      // Sanitize before persisting — strips <script>, inline event handlers,
+      // and any unexpected tags Tiptap shouldn't be able to produce.
+      const safeContent = sanitizeHtml(form.content);
       // Auto-fill read_time when the editor left it blank.
-      const readTime = form.read_time.trim() || calcReadTime(form.content) || null;
+      const readTime = form.read_time.trim() || calcReadTime(safeContent) || null;
       const row: Record<string, unknown> = {
         title: form.title.trim(),
         slug: form.slug.trim(),
         excerpt: form.excerpt.trim() || null,
-        content: form.content,
+        content: safeContent,
         cover_image_url: form.cover_image_url,
         category: form.category.trim() || null,
         tags: form.tags

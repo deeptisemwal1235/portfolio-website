@@ -70,6 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {SUPABASE_ORIGIN && (
           <link rel="preconnect" href={SUPABASE_ORIGIN} crossOrigin="anonymous" />
         )}
+        <link rel="alternate" type="application/rss+xml" title="Deepti Semwal — Analysis" href="/feed.xml" />
       </head>
       <body>
         <NextTopLoader color="#c46a5a" height={2} showSpinner={false} crawlSpeed={200} speed={300} shadow="0 0 8px #c46a5a" />
