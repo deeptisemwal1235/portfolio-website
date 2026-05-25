@@ -838,3 +838,37 @@ Verified: `npm run build` → 30 routes, 14 SSG (including 10 OG cards), middlew
 
 Migration applied in production:
 - `0007_settings_faq.sql` ✅
+
+### Session 9 — 2026-05-25 — 9 more backlog items (skipped newsletter)
+
+Scope: deeper round of polish + a few new features. One commit (`8b23c05`), two migrations.
+
+Reliability
+- `@sentry/nextjs` wired with no-op-without-DSN init for client / server / edge runtimes (`sentry.{client,server,edge}.config.ts` + `instrumentation.ts` + a tiny `components/SentryInit.tsx` for client bootstrap from the root layout). When `NEXT_PUBLIC_SENTRY_DSN` and/or `SENTRY_DSN` are unset, every init is a no-op and the SDK never enters the first-load bundle (dynamic import in `SentryInit` is the gate). `app/error.tsx` now dynamic-imports `@sentry/nextjs` and `captureException`s the boundary's error so visible failures land in the dashboard. CSP `connect-src` extended to `*.sentry.io / *.ingest.sentry.io / *.ingest.us.sentry.io / *.ingest.de.sentry.io`.
+
+Admin UX
+- `ImageUpload` got a "Browse uploads" toggle that lazy-lists the `portfolio-media` bucket (newest 100, image MIME filter) and renders a clickable thumbnail grid. Stops bucket bloat from re-uploading the same hero / cover. CSS in `app/admin/admin.css` (`.image-library*`).
+- `ContentEditor` autosaves the working form to `localStorage` 1s after every change while dirty. On mount, if a fresher draft is found, a `restore-banner` offers Restore / Discard. Successful server save clears the draft key. Keyed by `editor-draft:${kind}:${id|new}`.
+- Drag-reorder extended to analysis: `OrderEditor` parameterised by `table` + a `meta` column (used for category since posts don't have year); new route `app/admin/analysis/order`; dashboard's Analysis card gets the same "Reorder" link as projects.
+- `posts.display_order` column + index migration `0008_posts_display_order.sql` (mirror of `0001`). `lib/db.getPublishedPosts()` now orders by `display_order` first.
+
+Editorial
+- New `components/sections/Testimonials.tsx` slots between Services and Projects on home. 3 quote slots, all editable from a new "Testimonials" tab in `/admin/settings`. Section auto-hides when every slot is blank. CSS includes responsive count-1 / 2 / 3 grids. Migration `0009_settings_testimonials.sql` seeds the keys (all empty). Defaults in `SETTING_DEFAULTS` so the homepage never breaks pre-migration.
+- `components/AuthorBio.tsx` — 120px circular portrait + name + bio paragraph + 3 links (About / Contact / LinkedIn from settings). Rendered under every article and project detail page, after the share row. Reinforces the existing Person JSON-LD for AI-citation purposes.
+
+SEO / a11y
+- `<time datetime="…">` wrapping every formatted date and project year across detail pages, card grids, `AnalysisFilter`, and the related-posts block. Tiny diff; every parser (Google, AI assistants, feed readers) now sees structured timestamps.
+- `--ink-3` colour token: `#6a4f44` → `#5d4338` (second bump in two sessions). Cleared AA at 10px mono against both `--paper` and `--bg-2`. Contact form label alpha bumped 0.55 → 0.78, placeholder 0.32 → 0.55 to clear AA against the dark contact section background.
+
+Perf / dev experience
+- `@next/bundle-analyzer` wired behind `ANALYZE=true`. `npm run analyze` dumps the report to `.next/analyze/`. Wrapped via `withBundleAnalyzer(nextConfig)`; no-op otherwise.
+
+Skipped (per user): newsletter signup. Will pick up later when there's something to email.
+
+Verified: `npm run build` → all routes green, 14 SSG (including the 10 per-slug OG cards from Session 8), middleware 80.7 kB. Tested locally that Sentry is no-op without DSN.
+
+Migrations to apply:
+- `0008_posts_display_order.sql`
+- `0009_settings_testimonials.sql`
+
+Backlog: still 51-ish items, all 📦 / 🌱. Biggest remaining levers: bulk publish/delete in admin, site-wide search (FlexSearch), post revision history, soft-delete / trash, mobile-friendly admin, project/post revision history, Storybook, Vitest/Playwright smoke tests.
