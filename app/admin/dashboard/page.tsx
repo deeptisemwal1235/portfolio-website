@@ -61,7 +61,10 @@ export default async function DashboardPage() {
         <section className="admin-card">
           <div className="admin-card-head">
             <h2>Analysis</h2>
-            <Link className="btn-primary-cta" href="/admin/analysis/new">+ New article</Link>
+            <div style={{ display: "flex", gap: 10 }}>
+              <Link className="btn-link" href="/admin/analysis/order">Reorder</Link>
+              <Link className="btn-primary-cta" href="/admin/analysis/new">+ New article</Link>
+            </div>
           </div>
           {!posts || posts.length === 0 ? (
             <p>No articles yet.</p>

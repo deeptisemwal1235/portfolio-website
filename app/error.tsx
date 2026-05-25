@@ -13,6 +13,11 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
     // In production, Vercel logs already capture this. The console.error is
     // there for local dev so you don't have to dig through the network tab.
     if (process.env.NODE_ENV !== "production") console.error(error);
+    // Report to Sentry when configured. Imported dynamically so the SDK
+    // doesn't enter the first-load bundle when DSN isn't set.
+    if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
+      import("@sentry/nextjs").then((Sentry) => Sentry.captureException(error)).catch(() => {});
+    }
   }, [error]);
 
   return (

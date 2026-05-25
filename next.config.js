@@ -17,7 +17,7 @@ const CSP = [
   `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
   `font-src 'self' data: https://fonts.gstatic.com`,
   `img-src 'self' data: blob: https://${supabaseHost} https://*.supabase.co`,
-  `connect-src 'self' https://${supabaseHost} https://*.supabase.co https://va.vercel-scripts.com https://vitals.vercel-insights.com`,
+  `connect-src 'self' https://${supabaseHost} https://*.supabase.co https://va.vercel-scripts.com https://vitals.vercel-insights.com https://*.sentry.io https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io`,
   `frame-ancestors 'none'`,
   `base-uri 'self'`,
   `form-action 'self'`,
@@ -58,4 +58,11 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+// Bundle analyzer: opt-in via `ANALYZE=true npm run build`. No-op otherwise,
+// so the production build is unaffected. Output goes to .next/analyze/.
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+  openAnalyzer: false,
+});
+
+module.exports = withBundleAnalyzer(nextConfig);

@@ -84,6 +84,7 @@ export async function getPublishedPosts(): Promise<PostRow[]> {
     .from("posts")
     .select("*")
     .eq("published", true)
+    .order("display_order", { ascending: true, nullsFirst: false })
     .order("published_at", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false });
   if (error) {

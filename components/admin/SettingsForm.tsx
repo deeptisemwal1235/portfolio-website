@@ -105,6 +105,23 @@ const TABS: Tab[] = [
     ],
   },
   {
+    id: "testimonials",
+    label: "Testimonials",
+    fields: [
+      { key: "section_testimonials_eyebrow", label: "Section eyebrow", type: "text" },
+      { key: "section_testimonials_title_html", label: "Section title (HTML)", type: "text" },
+      { key: "testimonial_1_text", label: "Quote 1 — text", help: "Leave blank to hide this slot.", type: "textarea" },
+      { key: "testimonial_1_author", label: "Quote 1 — author", type: "text" },
+      { key: "testimonial_1_role", label: "Quote 1 — role / company", type: "text" },
+      { key: "testimonial_2_text", label: "Quote 2 — text", type: "textarea" },
+      { key: "testimonial_2_author", label: "Quote 2 — author", type: "text" },
+      { key: "testimonial_2_role", label: "Quote 2 — role / company", type: "text" },
+      { key: "testimonial_3_text", label: "Quote 3 — text", type: "textarea" },
+      { key: "testimonial_3_author", label: "Quote 3 — author", type: "text" },
+      { key: "testimonial_3_role", label: "Quote 3 — role / company", type: "text" },
+    ],
+  },
+  {
     id: "faq",
     label: "FAQ",
     fields: [

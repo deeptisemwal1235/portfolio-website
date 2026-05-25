@@ -6,6 +6,7 @@ import Footer from "@/components/ui/Footer";
 import Link from "next/link";
 import { getPostBySlug, listPublishedPostSlugs, formatPostDate, getRelatedPosts } from "@/lib/db";
 import ShareButtons from "@/components/ShareButtons";
+import AuthorBio from "@/components/AuthorBio";
 import { thumbClassFor } from "@/lib/svgMap";
 import { JsonLd, articleJsonLd, breadcrumbJsonLd, SITE_URL } from "@/lib/jsonLd";
 import { getSettings } from "@/lib/settings";
@@ -80,7 +81,7 @@ export default async function AnalysisDetailPage({ params }: { params: { slug: s
           <a className="back-link" href="/#analysis">← Back to analysis</a>
           <div className="detail-meta">
             {p.category && <span className="cat">{p.category}</span>}
-            {date && <span>{date}</span>}
+            {date && <time dateTime={p.published_at ?? p.created_at ?? undefined}>{date}</time>}
             {p.read_time && <span>{p.read_time}</span>}
             <span>by Deepti Semwal</span>
           </div>
@@ -111,6 +112,9 @@ export default async function AnalysisDetailPage({ params }: { params: { slug: s
         <div className="container">
           <ShareButtons url={articleUrl} title={p.title} />
         </div>
+        <div className="container">
+          <AuthorBio settings={settings} />
+        </div>
         {related.length > 0 && (
           <div className="container">
             <aside className="related-posts">
@@ -121,7 +125,9 @@ export default async function AnalysisDetailPage({ params }: { params: { slug: s
                     <div className="article-meta">
                       <span className="cat">{r.category}</span>
                       <span>
-                        {formatPostDate(r.published_at)}
+                        {r.published_at && (
+                          <time dateTime={r.published_at}>{formatPostDate(r.published_at)}</time>
+                        )}
                         {r.read_time ? ` · ${r.read_time}` : ""}
                       </span>
                     </div>
@@ -136,7 +142,12 @@ export default async function AnalysisDetailPage({ params }: { params: { slug: s
         )}
         <div className="container">
           <div className="detail-footer">
-            <div>{[date && `Published ${date}`, p.category].filter(Boolean).join(" · ")}</div>
+            <div>
+              {date && (
+                <>Published <time dateTime={p.published_at ?? p.created_at ?? undefined}>{date}</time></>
+              )}
+              {p.category && <> · {p.category}</>}
+            </div>
             <a href="/#analysis">← All analysis</a>
           </div>
         </div>

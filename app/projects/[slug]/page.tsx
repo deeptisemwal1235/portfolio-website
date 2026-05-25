@@ -7,6 +7,8 @@ import { getProjectBySlug, listPublishedProjectSlugs } from "@/lib/db";
 import { thumbClassFor } from "@/lib/svgMap";
 import { JsonLd, articleJsonLd, breadcrumbJsonLd, SITE_URL } from "@/lib/jsonLd";
 import { getSettings } from "@/lib/settings";
+import ShareButtons from "@/components/ShareButtons";
+import AuthorBio from "@/components/AuthorBio";
 
 export const revalidate = 60;
 
@@ -74,7 +76,7 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
           <a className="back-link" href="/#projects">← Back to projects</a>
           <div className="detail-meta">
             {p.category && <span className="cat">{p.category}</span>}
-            {p.year !== null && <span>{p.year}</span>}
+            {p.year !== null && <time dateTime={String(p.year)}>{p.year}</time>}
             {p.read_time && <span>{p.read_time}</span>}
             <span>by Deepti Semwal</span>
           </div>
@@ -102,6 +104,12 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
 
       <main className="detail-body">
         <article className="container" dangerouslySetInnerHTML={{ __html: p.content ?? "" }} />
+        <div className="container">
+          <ShareButtons url={`${SITE_URL}/projects/${p.slug}`} title={p.title} />
+        </div>
+        <div className="container">
+          <AuthorBio settings={settings} />
+        </div>
         <div className="container">
           <div className="detail-footer">
             <div>{[p.category, p.year].filter(Boolean).join(" · ")}</div>

@@ -5,9 +5,17 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
-type Row = { id: string; title: string; year: number | null; published: boolean };
+type Row = { id: string; title: string; year?: number | null; meta?: string | null; published: boolean };
 
-export default function OrderEditor({ rows: initial }: { rows: Row[] }) {
+export default function OrderEditor({
+  rows: initial,
+  table = "projects",
+  metaLabel,
+}: {
+  rows: Row[];
+  table?: "projects" | "posts";
+  metaLabel?: string;
+}) {
   const router = useRouter();
   const [rows, setRows] = useState(initial);
   const [pending, start] = useTransition();
@@ -58,7 +66,7 @@ export default function OrderEditor({ rows: initial }: { rows: Row[] }) {
       // function. Each call hits RLS as the authenticated admin user.
       for (let i = 0; i < rows.length; i++) {
         const { error } = await sb
-          .from("projects")
+          .from(table)
           .update({ display_order: i + 1 })
           .eq("id", rows[i]!.id);
         if (error) {
@@ -92,7 +100,7 @@ export default function OrderEditor({ rows: initial }: { rows: Row[] }) {
             <span className="drag-handle" aria-hidden="true">⋮⋮</span>
             <span className="order-num">{i + 1}</span>
             <span className="order-title">{r.title}</span>
-            <span className="order-year">{r.year ?? "—"}</span>
+            <span className="order-year">{r.year ?? r.meta ?? "—"}</span>
             <span className={`status-pill ${r.published ? "published" : "draft"}`}>
               {r.published ? "Published" : "Draft"}
             </span>

@@ -222,3 +222,25 @@
 .save-state:has(*), .save-state {
   /* When unsaved, the dot in "● Unsaved changes" reads as accent. */
 }
+
+/* ---------- Image library (ImageUpload "Browse uploads") ---------- */
+.image-library { margin-top: 14px; border: 1px solid var(--rule); border-radius: 10px; padding: 14px; background: var(--paper); max-height: 380px; overflow-y: auto; }
+.image-library-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
+.image-library-item { padding: 0; border: 2px solid transparent; border-radius: 6px; background: var(--bg-2); cursor: pointer; overflow: hidden; aspect-ratio: 1; transition: border-color 0.15s ease; }
+.image-library-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.image-library-item:hover { border-color: var(--accent); }
+.image-library-item.selected { border-color: var(--accent-deep); box-shadow: 0 0 0 2px var(--accent-glow); }
+
+/* ---------- Tiptap autosave indicator ---------- */
+.editor-autosave { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); margin-top: 8px; }
+.editor-autosave .restore-link { color: var(--accent-deep); cursor: pointer; background: none; border: none; padding: 0; margin-left: 8px; font: inherit; text-decoration: underline; }
+
+/* ---------- Restore-draft banner (autosave) ---------- */
+.restore-banner {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 16px; flex-wrap: wrap;
+  background: var(--accent-glow); border: 1px solid var(--accent-soft);
+  border-radius: 8px; padding: 12px 16px; margin-bottom: 18px;
+  font-family: var(--sans); font-size: 14px; color: var(--ink);
+}
+.restore-banner .btn-link { margin-left: 8px; }

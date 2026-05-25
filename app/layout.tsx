@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import NextTopLoader from "nextjs-toploader";
 import NavScroll from "@/components/ui/NavScroll";
+import SentryInit from "@/components/SentryInit";
 import "./globals.css";
 
 const serif = Instrument_Serif({
@@ -78,6 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <NavScroll />
         {children}
         <Toaster position="bottom-right" />
+        <SentryInit />
         <Analytics />
         <SpeedInsights />
       </body>

@@ -54,7 +54,9 @@ export default function AnalysisFilter({ posts }: { posts: Post[] }) {
             <div className="article-meta">
               <span className="cat">{p.category}</span>
               <span>
-                {formatPostDate(p.published_at)}
+                {p.published_at && (
+                  <time dateTime={p.published_at}>{formatPostDate(p.published_at)}</time>
+                )}
                 {p.read_time ? ` · ${p.read_time}` : ""}
               </span>
             </div>

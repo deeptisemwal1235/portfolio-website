@@ -2,6 +2,7 @@ import Navbar from "@/components/ui/Navbar";
 import Hero from "@/components/sections/Hero";
 import Skills from "@/components/sections/Skills";
 import Services from "@/components/sections/Services";
+import Testimonials from "@/components/sections/Testimonials";
 import Projects from "@/components/sections/Projects";
 import Analysis from "@/components/sections/Analysis";
 import Contact from "@/components/sections/Contact";
@@ -20,6 +21,7 @@ export default async function HomePage() {
       <Hero />
       <Skills />
       <Services />
+      <Testimonials />
       <Projects />
       <Analysis />
       <Contact />

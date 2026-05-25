@@ -88,6 +88,21 @@ export const SETTING_DEFAULTS = {
   about_skills_html:
     "<h2>Core expertise</h2><ul><li>CERC / SERC regulations, tariff orders, ARR filings</li><li>India CCTS, voluntary carbon credits, PAT scheme</li><li>SATAT / CBG project economics</li><li>National Green Hydrogen Mission, SECI tender analysis</li><li>Power markets (DAM / TAM / RTM) and emerging derivatives</li><li>RE income projection, P90 revenue scenarios</li></ul>",
 
+  // ---- Testimonials (home page section between Services and Projects) ----
+  // Leave a quote_n_text empty to hide that slot. Section hides entirely if
+  // every slot is empty.
+  section_testimonials_eyebrow: "§ — Trust",
+  section_testimonials_title_html: "What clients <em>say.</em>",
+  testimonial_1_text: "",
+  testimonial_1_author: "",
+  testimonial_1_role: "",
+  testimonial_2_text: "",
+  testimonial_2_author: "",
+  testimonial_2_role: "",
+  testimonial_3_text: "",
+  testimonial_3_author: "",
+  testimonial_3_role: "",
+
   // ---- FAQ (about page + FAQPage JSON-LD) ----
   faq_1_q: "What does Deepti consult on?",
   faq_1_a: "Energy regulations (CERC / SERC), tariff orders and ARR filings, power-market strategy (DAM / TAM / RTM), carbon markets (India CCTS, voluntary credits), CBG project economics, and Green Hydrogen tender analysis.",

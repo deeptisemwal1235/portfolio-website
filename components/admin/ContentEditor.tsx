@@ -41,7 +41,10 @@ export default function ContentEditor({
 }) {
   const router = useRouter();
   const [pending, start] = useTransition();
+  const draftKey = `editor-draft:${kind}:${initial.id ?? "new"}`;
   const [form, setForm] = useState<Initial>(initial);
+  const [restoredAt, setRestoredAt] = useState<string | null>(null);
+  const [autosavedAt, setAutosavedAt] = useState<string | null>(null);
   // When true, slug auto-tracks title. Flipped to false the moment the
   // user edits the slug field manually, so we don't clobber their edit.
   const [slugAuto, setSlugAuto] = useState(mode === "create");
@@ -53,6 +56,53 @@ export default function ContentEditor({
   useEffect(() => {
     setDirty(JSON.stringify(form) !== JSON.stringify(savedRef.current));
   }, [form]);
+
+  // Autosave: debounce writes of the working form to localStorage so a tab
+  // close / browser crash / accidental navigation doesn't eat a long write.
+  // Restore prompt offered on mount if a fresher draft exists than `initial`.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem(draftKey);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as { savedAt: string; form: Initial };
+      const sameAsServer =
+        JSON.stringify(parsed.form) === JSON.stringify(initial);
+      if (sameAsServer) {
+        window.localStorage.removeItem(draftKey);
+        return;
+      }
+      setRestoredAt(parsed.savedAt);
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!dirty || typeof window === "undefined") return;
+    const t = setTimeout(() => {
+      try {
+        const stamp = new Date().toISOString();
+        window.localStorage.setItem(draftKey, JSON.stringify({ savedAt: stamp, form }));
+        setAutosavedAt(stamp);
+      } catch {}
+    }, 1000);
+    return () => clearTimeout(t);
+  }, [form, dirty, draftKey]);
+
+  function restoreDraft() {
+    try {
+      const raw = window.localStorage.getItem(draftKey);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as { savedAt: string; form: Initial };
+      setForm(parsed.form);
+      setRestoredAt(null);
+      toast.success("Draft restored");
+    } catch {}
+  }
+  function discardDraft() {
+    try { window.localStorage.removeItem(draftKey); } catch {}
+    setRestoredAt(null);
+  }
 
   // beforeunload — browser-native "unsaved changes" warning.
   useEffect(() => {
@@ -156,6 +206,9 @@ export default function ContentEditor({
       // Mark clean before navigating so beforeunload doesn't prompt.
       savedRef.current = { ...form };
       setDirty(false);
+      // Clear the local draft now that the server has the canonical copy.
+      try { window.localStorage.removeItem(draftKey); } catch {}
+      setAutosavedAt(null);
       toast.success("Saved");
       router.push("/admin/dashboard");
       router.refresh();
@@ -164,6 +217,18 @@ export default function ContentEditor({
 
   return (
     <div className="admin-form">
+      {restoredAt && (
+        <div className="restore-banner" role="status">
+          <span>
+            ● A more recent draft was found in this browser
+            (autosaved {new Date(restoredAt).toLocaleString()}).
+          </span>
+          <span>
+            <button type="button" className="btn-link" onClick={restoreDraft}>Restore</button>
+            <button type="button" className="btn-link danger" onClick={discardDraft}>Discard</button>
+          </span>
+        </div>
+      )}
       <div className="row">
         <div>
           <label>Title</label>
@@ -275,6 +340,11 @@ export default function ContentEditor({
                 : ""}
         </span>
       </div>
+      {autosavedAt && dirty && (
+        <p className="editor-autosave">
+          Autosaved locally · {new Date(autosavedAt).toLocaleTimeString()}
+        </p>
+      )}
     </div>
   );
 }
