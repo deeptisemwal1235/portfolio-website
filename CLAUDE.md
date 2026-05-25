@@ -805,3 +805,36 @@ Editor UX (L)
   - Mono pill next to Save reads `● Unsaved changes — ⌘S to save` while dirty, `Saved` after success (edit mode only), `Saving…` during the transition.
 
 Backlog now at 53 items: 0 🔥 engineering items left, 2 🔥 content tasks (real About copy + a project cover image — both need the user, not code). The remaining 51 items are 📦 polish / hardening + 🌱 nice-to-haves.
+
+### Session 8 — 2026-05-25 — 10-item backlog sweep
+
+Scope: ten 📦 items in one pass — security hardening, SEO, a11y, perf, and a couple of editorial features. One commit (`9deeffa`), one migration.
+
+Security
+- `lib/sanitize.ts` — `isomorphic-dompurify` whitelist sanitizer. Allowed tags cover Tiptap output + figure / table; FORBID_ATTR strips inline event handlers and `style`. Called from `ContentEditor.save()` for both projects + posts, and from `SettingsForm.save()` for every `*_html` key. Belt-and-suspenders against an admin pasting markup with onclick / script.
+- `/api/contact` `originAllowed()`: requires an Origin header, rejects when the host isn't `req.host` or `NEXT_PUBLIC_SITE_URL`'s host. Returns 403 with `{ok:false, error:"Bad request"}`. Bots that POST without an Origin header are dropped before rate limiter, Supabase, or Resend get touched.
+
+Features
+- `components/AnalysisFilter.tsx` — client tabs on `/analysis` with `All` + one chip per category (with per-category count). Replaces the old category-grouped layout from Session 6.
+- `lib/db.ts:getRelatedPosts()` — scores siblings by (tagOverlap * 2 + categoryMatch). Top 3 render as a `related-posts` block on each `/analysis/[slug]`.
+- `components/ShareButtons.tsx` — X / LinkedIn / Copy-link row under each article body. Copy uses `navigator.clipboard` with sonner toast confirmation.
+
+SEO
+- `app/feed.xml/route.ts` — valid RSS 2.0 with atom self-link, every published post, 10-min revalidate + 1-day SWR cache header. `<link rel="alternate" type="application/rss+xml">` added to `<head>` so feed readers auto-discover.
+- FAQ on `/about` + `FAQPage` JSON-LD via `lib/jsonLd.faqJsonLd()`. 5 editable Q&A pairs (`faq_1_q..5_a`) seeded with sensible defaults that AI assistants will surface when asked "what does Deepti consult on / where is she based / etc."
+
+Perf
+- Removed `runtime = "edge"` from all three OG image routes (`/opengraph-image`, `/analysis/[slug]/opengraph-image`, `/projects/[slug]/opengraph-image`). Added `generateStaticParams` to the two per-slug ones — they now build as static assets on the CDN instead of an edge invocation per share. Build output confirms ● for every OG variant (10 cards total).
+
+A11y
+- `prefers-reduced-motion` media query in `globals.css` — neutralises `*` animations + transitions, pins ticker, locks `.reveal` to its final state.
+- `Navbar` mobile drawer: focus trap (Tab/Shift+Tab cycles within the drawer), focus moves into the drawer on open and back to the burger on Escape, `aria-modal="true"` + `aria-label` set when open.
+
+Admin
+- New `FAQ` tab in `/admin/settings` (10 fields). New `faq_*` keys in `SETTING_DEFAULTS` so the page never breaks pre-migration.
+- New `.filter-chips`, `.share-row`, `.share-btn`, `.related-posts`, `.faq-section`, `.faq-item` CSS in `globals.css`.
+
+Verified: `npm run build` → 30 routes, 14 SSG (including 10 OG cards), middleware 82.4 kB. Live on `9deeffa`.
+
+Migration applied in production:
+- `0007_settings_faq.sql` ✅
