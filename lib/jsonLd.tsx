@@ -36,7 +36,7 @@ function personPayload(settings?: Settings) {
 }
 
 type ArticleInput = {
-  kind: "Article" | "BlogPosting";
+  kind: "Article" | "BlogPosting" | "TechArticle" | "ScholarlyArticle";
   url: string;
   title: string;
   description?: string | null;
@@ -100,6 +100,39 @@ export function faqJsonLd(items: { question: string; answer: string }[]) {
       name: it.question,
       acceptedAnswer: { "@type": "Answer", text: it.answer },
     })),
+  };
+}
+
+/**
+ * The four consulting tracks as a schema.org OfferCatalog. Lets AI assistants
+ * and rich-results answer "what does Deepti offer" with the actual service
+ * names + descriptions. Reads titles/descriptions from settings so it stays in
+ * sync with whatever is edited in /admin/settings.
+ */
+export function servicesJsonLd(settings: Settings) {
+  const provider = personPayload(settings);
+  const offers = ([1, 2, 3, 4] as const)
+    .map((n) => ({
+      title: settings[`service_${n}_title`],
+      desc: settings[`service_${n}_desc`],
+    }))
+    .filter((o) => o.title)
+    .map((o) => ({
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: o.title,
+        description: o.desc || undefined,
+        provider,
+        areaServed: { "@type": "Country", name: "India" },
+        serviceType: "Energy policy & regulatory consulting",
+      },
+    }));
+  return {
+    "@context": "https://schema.org",
+    "@type": "OfferCatalog",
+    name: "Energy consulting services",
+    itemListElement: offers,
   };
 }
 

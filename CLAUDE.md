@@ -885,5 +885,16 @@ Migrations applied this session (user ran in Supabase SQL editor):
 - `0009_settings_testimonials.sql` ✅ — testimonials section keys seeded
 
 Operational follow-ups for the user (not code):
-- Set `NEXT_PUBLIC_SITE_URL=https://deepti-semwal.vercel.app` in Vercel env (all scopes) + redeploy — the env var is the real source of truth; the code fallback is only a safety net.
-- Update Supabase Auth → URL Configuration (Site URL + redirect URLs) to the new domain so admin login/redirects keep working.
+- Set `NEXT_PUBLIC_SITE_URL=https://deepti-semwal.vercel.app` in Vercel env (all scopes) + redeploy — the env var is the real source of truth; the code fallback is only a safety net. ✅ done by user
+- Update Supabase Auth → URL Configuration (Site URL + redirect URLs) to the new domain so admin login/redirects keep working. ✅ done by user
+
+### Session 11 — 2026-05-31 — SEO quick-wins cluster
+
+Scope: four code-only SEO refinements building on the existing `lib/jsonLd.tsx` infra. No migrations.
+
+- **Service schema** — `servicesJsonLd(settings)` in `lib/jsonLd.tsx` emits a schema.org `OfferCatalog`: one `Offer` per consulting track, each wrapping a `Service` (name + description from `service_{1..4}_*` settings, `provider` = the enriched Person, `areaServed` India). Filters out blank titles. Emitted on the home page (`app/page.tsx`) alongside the existing WebSite + Person JSON-LD. Keeps AI-assistant "what does Deepti offer" answers grounded in the live service copy.
+- **TechArticle** — `ArticleInput.kind` union widened to `Article | BlogPosting | TechArticle | ScholarlyArticle`. `app/projects/[slug]/page.tsx` now emits `TechArticle` (more precise than generic `Article` for the technical write-ups); analysis stays `BlogPosting`.
+- **"Last updated" indicator** — `isMeaningfullyUpdated(published, updated, minDays=7)` + `formatLongDate(iso)` added to `lib/utils.ts`. The 7-day floor means a draft's first-publish same-day `updated_at` touch never trips it. Both detail pages render a mono "Last updated {date}" line (with `<time datetime>`) under the standfirst when a real revision exists. New `.updated-note` CSS in `globals.css`.
+- **Canonicals + hreflang** — explicit `alternates.canonical` + `languages` (`en-IN` + `x-default`) added to the home page, `/projects`, and `/analysis` metadata. Detail pages already carried canonicals (Session 6).
+
+Verified: `npm run build` green, all 30 routes intact (14 SSG including the 10 OG cards), middleware 80.7 kB.

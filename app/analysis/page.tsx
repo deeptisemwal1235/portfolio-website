@@ -3,12 +3,19 @@ import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import AnalysisFilter from "@/components/AnalysisFilter";
 import { getPublishedPosts } from "@/lib/db";
+import { SITE_URL } from "@/lib/jsonLd";
 
 export const revalidate = 60;
+
+const ANALYSIS_URL = `${SITE_URL}/analysis`;
 
 export const metadata: Metadata = {
   title: "Analysis · Deepti Semwal",
   description: "Short reads on India's energy sector — tariff moves, market design, carbon, hydrogen, and biofuels.",
+  alternates: {
+    canonical: ANALYSIS_URL,
+    languages: { "en-IN": ANALYSIS_URL, "x-default": ANALYSIS_URL },
+  },
 };
 
 export default async function AnalysisIndex() {

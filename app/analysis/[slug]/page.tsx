@@ -10,6 +10,7 @@ import AuthorBio from "@/components/AuthorBio";
 import { thumbClassFor } from "@/lib/svgMap";
 import { JsonLd, articleJsonLd, breadcrumbJsonLd, SITE_URL } from "@/lib/jsonLd";
 import { getSettings } from "@/lib/settings";
+import { isMeaningfullyUpdated, formatLongDate } from "@/lib/utils";
 
 export const revalidate = 60;
 
@@ -51,6 +52,7 @@ export default async function AnalysisDetailPage({ params }: { params: { slug: s
 
   const date = formatPostDate(p.published_at);
   const thumb = thumbClassFor(p.slug);
+  const updated = isMeaningfullyUpdated(p.published_at ?? p.created_at, p.updated_at);
 
   const ld = articleJsonLd({
     kind: "BlogPosting",
@@ -87,6 +89,12 @@ export default async function AnalysisDetailPage({ params }: { params: { slug: s
           </div>
           <h1>{p.title}.</h1>
           {p.excerpt && <p className="standfirst">{p.excerpt}</p>}
+          {updated && (
+            <p className="updated-note">
+              Last updated{" "}
+              <time dateTime={p.updated_at ?? undefined}>{formatLongDate(p.updated_at)}</time>
+            </p>
+          )}
         </div>
       </header>
 

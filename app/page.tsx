@@ -7,8 +7,16 @@ import Projects from "@/components/sections/Projects";
 import Analysis from "@/components/sections/Analysis";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/ui/Footer";
-import { JsonLd, websiteJsonLd, personJsonLd } from "@/lib/jsonLd";
+import type { Metadata } from "next";
+import { JsonLd, websiteJsonLd, personJsonLd, servicesJsonLd, SITE_URL } from "@/lib/jsonLd";
 import { getSettings } from "@/lib/settings";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: SITE_URL,
+    languages: { "en-IN": SITE_URL, "x-default": SITE_URL },
+  },
+};
 
 export default async function HomePage() {
   const settings = await getSettings();
@@ -16,6 +24,7 @@ export default async function HomePage() {
     <>
       <JsonLd data={websiteJsonLd()} />
       <JsonLd data={personJsonLd(settings)} />
+      <JsonLd data={servicesJsonLd(settings)} />
       <Navbar />
       <main id="main">
       <Hero />

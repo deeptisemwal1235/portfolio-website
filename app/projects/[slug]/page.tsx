@@ -7,6 +7,7 @@ import { getProjectBySlug, listPublishedProjectSlugs } from "@/lib/db";
 import { thumbClassFor } from "@/lib/svgMap";
 import { JsonLd, articleJsonLd, breadcrumbJsonLd, SITE_URL } from "@/lib/jsonLd";
 import { getSettings } from "@/lib/settings";
+import { isMeaningfullyUpdated, formatLongDate } from "@/lib/utils";
 import ShareButtons from "@/components/ShareButtons";
 import AuthorBio from "@/components/AuthorBio";
 
@@ -47,8 +48,10 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
 
   const thumb = thumbClassFor(p.slug);
 
+  const updated = isMeaningfullyUpdated(p.created_at, p.updated_at);
+
   const ld = articleJsonLd({
-    kind: "Article",
+    kind: "TechArticle",
     url: `${SITE_URL}/projects/${p.slug}`,
     title: p.title,
     description: p.excerpt,
@@ -82,6 +85,12 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
           </div>
           <h1>{p.title}.</h1>
           {p.excerpt && <p className="standfirst">{p.excerpt}</p>}
+          {updated && (
+            <p className="updated-note">
+              Last updated{" "}
+              <time dateTime={p.updated_at ?? undefined}>{formatLongDate(p.updated_at)}</time>
+            </p>
+          )}
         </div>
       </header>
 

@@ -450,6 +450,8 @@ section.s { padding: clamp(80px, 11vw, 140px) 0; position: relative; }
 .detail-meta .cat { color: var(--accent-deep); }
 .detail-hero h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(38px, 6vw, 84px); line-height: 1.0; letter-spacing: -0.02em; max-width: 22ch; }
 .detail-hero .standfirst { margin-top: 28px; font-size: clamp(18px, 1.6vw, 22px); line-height: 1.55; color: var(--ink-2); max-width: 64ch; font-family: var(--serif); font-style: italic; }
+.detail-hero .updated-note { margin-top: 18px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+.detail-hero .updated-note time { color: var(--ink-2); }
 
 .detail-banner { width: 100%; aspect-ratio: 21/9; border-radius: 4px; margin: 48px 0; position: relative; overflow: hidden; }
 .detail-banner .scene-label { position: absolute; bottom: 16px; left: 16px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(250,244,234,0.7); }

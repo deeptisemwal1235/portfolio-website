@@ -5,12 +5,19 @@ import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import { getPublishedProjects } from "@/lib/db";
 import { PROJECT_THUMB_SVG, thumbClassFor } from "@/lib/svgMap";
+import { SITE_URL } from "@/lib/jsonLd";
 
 export const revalidate = 60;
+
+const PROJECTS_URL = `${SITE_URL}/projects`;
 
 export const metadata: Metadata = {
   title: "Projects · Deepti Semwal",
   description: "Selected academic and consulting projects across wind, storage, solar, and grid economics.",
+  alternates: {
+    canonical: PROJECTS_URL,
+    languages: { "en-IN": PROJECTS_URL, "x-default": PROJECTS_URL },
+  },
 };
 
 export default async function ProjectsIndex() {
