@@ -1,7 +1,7 @@
 import { listPublishedProjectsForSitemap, listPublishedPostsForSitemap } from "@/lib/db";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://portfolio-website-xi-ivory.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://deepti-semwal.vercel.app";
 
 export const revalidate = 3600;
 

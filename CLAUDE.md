@@ -872,3 +872,18 @@ Migrations to apply:
 - `0009_settings_testimonials.sql`
 
 Backlog: still 51-ish items, all 📦 / 🌱. Biggest remaining levers: bulk publish/delete in admin, site-wide search (FlexSearch), post revision history, soft-delete / trash, mobile-friendly admin, project/post revision history, Storybook, Vitest/Playwright smoke tests.
+
+### Session 10 — 2026-05-31 — Domain migration to deepti-semwal.vercel.app
+
+Scope: the Vercel project now serves from `https://deepti-semwal.vercel.app/` (was `portfolio-website-xi-ivory.vercel.app`). Pure config — one commit, no migrations.
+
+- Updated the hardcoded `NEXT_PUBLIC_SITE_URL` fallback in all 5 code files that carry it: `app/robots.ts`, `app/layout.tsx`, `app/llms.txt/route.ts`, `app/sitemap.ts`, `lib/jsonLd.tsx`. These fall back to the new domain when the env var is unset, so canonical / sitemap / robots / RSS / OG / JSON-LD URLs never point at the dead origin.
+- `npm run build` green; `grep` confirms zero `portfolio-website-xi-ivory` references remain in source.
+
+Migrations applied this session (user ran in Supabase SQL editor):
+- `0008_posts_display_order.sql` ✅ — analysis drag-reorder now functional
+- `0009_settings_testimonials.sql` ✅ — testimonials section keys seeded
+
+Operational follow-ups for the user (not code):
+- Set `NEXT_PUBLIC_SITE_URL=https://deepti-semwal.vercel.app` in Vercel env (all scopes) + redeploy — the env var is the real source of truth; the code fallback is only a safety net.
+- Update Supabase Auth → URL Configuration (Site URL + redirect URLs) to the new domain so admin login/redirects keep working.

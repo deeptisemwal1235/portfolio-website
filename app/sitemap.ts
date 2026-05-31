@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { listPublishedProjectsForSitemap, listPublishedPostsForSitemap } from "@/lib/db";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://portfolio-website-xi-ivory.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://deepti-semwal.vercel.app";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [projects, posts] = await Promise.all([

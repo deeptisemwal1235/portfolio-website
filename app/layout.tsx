@@ -32,7 +32,7 @@ const faviconSvg =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232a1f17'/%3E%3Ctext x='50' y='66' font-family='Georgia,serif' font-style='italic' font-size='54' text-anchor='middle' fill='%23f4ebe0'%3EDS%3C/text%3E%3C/svg%3E";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://portfolio-website-xi-ivory.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://deepti-semwal.vercel.app";
 
 // Pull the host out of the Supabase URL so we only preconnect to the actual
 // storage origin in use (and not, say, a wildcard placeholder during PR builds).
